@@ -1,0 +1,40 @@
+{
+    "name": "hoverhex",
+    "displayName": "hoverhex",
+    "description": "Provide quick decimal conversion of hexadecimal strings",
+    "version": "0.0.1",
+    "publisher": "thegtproject",
+    "license": "MIT",
+	"keywords": [
+        "hex",
+        "hovor"
+    ],
+    "repository": {
+		"type": "git",
+		"url": "https://github.com/thegtproject/vscode-hoverhex.git"
+	},
+    "engines": {
+        "vscode": "^1.23.0"
+    },
+    "categories": [
+        "Other"
+    ],
+    "activationEvents": [
+        "workspaceContains:*"
+    ],
+    "main": "./out/extension",
+    "scripts": {
+        "vscode:prepublish": "npm run compile",
+        "compile": "tsc -p ./",
+        "watch": "tsc -watch -p ./",
+        "postinstall": "node ./node_modules/vscode/bin/install",
+        "test": "npm run compile && node ./node_modules/vscode/bin/test"
+    },
+    "devDependencies": {
+        "@types/mocha": "^2.2.42",
+        "@types/node": "^7.0.43",
+        "tslint": "^5.10.0",
+        "typescript": "^2.6.1",
+        "vscode": "^1.1.6"
+    }
+}
