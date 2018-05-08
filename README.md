@@ -20,4 +20,4 @@ Initial release
 
 **Enjoy!**
 
-https://github.com/thegtproject/hoverhex
+https://github.com/thegtproject/vscode-hoverhex
