@@ -1,4 +1,4 @@
-# vscode-hoverhex [![Build Status]](https://travis-ci.org/thegtproject/vscode-hoverhex.svg?branch=master)
+# vscode-hoverhex [![Build Status](https://travis-ci.org/thegtproject/vscode-hoverhex.svg?branch=master)
 
 Hoverhex displays the decimal value of any valid hex number that the mouse is hovering.
 
