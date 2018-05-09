@@ -2,17 +2,17 @@
     "name": "hoverhex",
     "displayName": "hoverhex",
     "description": "Provide quick decimal conversion of hexadecimal strings",
-    "version": "0.0.1",
+    "version": "0.0.2",
     "publisher": "thegtproject",
     "license": "MIT",
-	"keywords": [
+    "keywords": [
         "hex",
-        "hovor"
+        "hover"
     ],
     "repository": {
-		"type": "git",
-		"url": "https://github.com/thegtproject/vscode-hoverhex.git"
-	},
+        "type": "git",
+        "url": "https://github.com/thegtproject/vscode-hoverhex.git"
+    },
     "engines": {
         "vscode": "^1.23.0"
     },
