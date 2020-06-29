@@ -2,7 +2,7 @@
     "name": "hoverhex",
     "displayName": "hoverhex",
     "description": "Provide quick decimal conversion of hexadecimal strings",
-    "version": "0.0.2",
+    "version": "0.0.3",
     "publisher": "thegtproject",
     "license": "MIT",
     "keywords": [
