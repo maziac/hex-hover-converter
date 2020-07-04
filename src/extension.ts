@@ -4,7 +4,7 @@ import * as vscode from 'vscode';
 export function activate(context: vscode.ExtensionContext) {
     let aa=vscode.languages.registerHoverProvider({scheme: '*', language: '*'}, {
         provideHover(document, position, token) {
-            const range=document.getWordRangeAtPosition(position, /[\$0-9a-fA-Fbhx]+\b/)!;
+            const range=document.getWordRangeAtPosition(position, /(?<!\w)[\$0-9a-fA-Fbhx]+\b/)!;
             const hoveredWord=document.getText(range);
             if (hoveredWord) {
                 // Check if negative
