@@ -2,12 +2,14 @@
     "name": "hex-hover-converter",
     "displayName": "Hex Hover Converter",
     "description": "Provides conversion between decimal, hex and binary numbers while hovering.",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "publisher": "maziac",
     "license": "MIT",
     "keywords": [
         "hex",
         "binary",
+        "decimal",
+        "convert",
         "hover"
     ],
     "repository": {
