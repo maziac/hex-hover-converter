@@ -1,6 +1,6 @@
 'use strict';
 import * as vscode from 'vscode';
- 
+
 export function activate(context: vscode.ExtensionContext) {
     let aa=vscode.languages.registerHoverProvider({scheme: '*', language: '*'}, {
         provideHover(document, position, token) {
@@ -29,8 +29,8 @@ export function activate(context: vscode.ExtensionContext) {
                     const negMatch=/-\s*$/.exec(line);
                     if (negMatch!=undefined)
                         negativeDecValue=value;
-                }                    
-               
+                }
+
                 // Check for hex
                 match=/^0x([0-9a-fA-F]+)$/g.exec(hoveredWord);  // E.g. 0x12FA
                 if (!match)
@@ -64,7 +64,7 @@ export function activate(context: vscode.ExtensionContext) {
                     addColumn(lines, 2, value, value, value);
                 }
 
-                // Check for negative decimal values                
+                // Check for negative decimal values
                 if (negativeDecValue!=undefined) {
                     const value=negativeDecValue;
                     let negValue;
@@ -77,7 +77,7 @@ export function activate(context: vscode.ExtensionContext) {
                     addColumn(lines, 0, -negativeDecValue, negValue, negValue);
                 }
 
-                // Check for negative hex values                
+                // Check for negative hex values
                 if (negativeHexValue!=undefined) {
                     const value=negativeHexValue;
                     let negValue;
@@ -88,7 +88,7 @@ export function activate(context: vscode.ExtensionContext) {
                     else
                         negValue=0x100000000-value;
                     addColumn(lines, 1, -negValue, negativeHexValue, negativeHexValue);
-                }               
+                }
 
                 // Check if the value was converted and should be shown
                 if (lines.length!=0) {
@@ -101,7 +101,7 @@ export function activate(context: vscode.ExtensionContext) {
             }
         }
     });
-    context.subscriptions.push(aa); 
+    context.subscriptions.push(aa);
 }
 
 export function deactivate() {
@@ -111,7 +111,7 @@ export function deactivate() {
 /**
  * Adds a colum to the table.
  * @param lines The lines of the table.
- * @param emphasizedLine The line numberto emphasize (bold).
+ * @param emphasizedLine The line number to emphasize (bold).
  * @param decValue The decimal value to show.
  * @param hexValue The hex value to show.
  * @param binValue The binary value to show.

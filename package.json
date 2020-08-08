@@ -1,17 +1,18 @@
 {
-    "name": "hoverhex",
-    "displayName": "hoverhex",
-    "description": "Provide quick decimal conversion of hexadecimal strings",
-    "version": "0.0.3",
-    "publisher": "thegtproject",
+    "name": "hex-hover-converter",
+    "displayName": "HEX Hover Converter",
+    "description": "Provides conversion between decimal, hex and binary numbers while hovering.",
+    "version": "0.1.0",
+    "publisher": "maziac",
     "license": "MIT",
     "keywords": [
         "hex",
+        "binary",
         "hover"
     ],
     "repository": {
         "type": "git",
-        "url": "https://github.com/thegtproject/vscode-hoverhex.git"
+        "url": "https://github.com/maziac/hex-hover-convert.git"
     },
     "engines": {
         "vscode": "^1.23.0"

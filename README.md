@@ -1,28 +1,13 @@
-# vscode-hoverhex ![Build Status](https://travis-ci.org/thegtproject/vscode-hoverhex.svg?branch=master)
+# Hex Hover Converter
 
-Hoverhex displays the decimal value of any valid hex number that the mouse is hovering.
+# License and Acknowledgements
 
-## Features
+This extension is based on the https://github.com/thegtproject/vscode-hoverhex by [Brandon/thegtproject](https://github.com/thegtproject) and originally was a pull request.
+But the original project seems to be abandoned.
+As it is MIT licensed I decided to use the extension skeleton from the original project and enhance the simple hex conversion into a more enhanced decimal-hex-binary conversion in all directions.
 
-Quickly know the decimal value of a hexadecimal string
-
-
-![](images/hoverhex.gif)
-
-
-> Hoverhex is configured to work on any document
-
-### 0.0.2 - 2018.05.09
-
-Fixed a typo
-Added travis build badge
-
-### 0.0.1 - 2018.05.08
-
-Initial release
+This extension is also MIT licensed.
 
 
 
-**Enjoy!**
 
-https://github.com/thegtproject/vscode-hoverhex
