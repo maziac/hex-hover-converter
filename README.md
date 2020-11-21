@@ -19,6 +19,11 @@ If there are more than one interpretations possible both conversions are shown.
 Additionally it also converts negative values.
 
 
+# Hovers in Debug Mode
+
+vscode turns the normal hovers off if in debug mode. To make them visible press the "ALT" key while hovering.
+
+
 # License and Acknowledgements
 
 This extension is based on the https://github.com/thegtproject/vscode-hoverhex by [Brandon/thegtproject](https://github.com/thegtproject) and originally was a pull request.
