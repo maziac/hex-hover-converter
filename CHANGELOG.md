@@ -2,6 +2,9 @@
 
 # Changelog
 
+# 1.1.0
+- Added support for "UL" e.g. "0xFFFF0000UL".
+
 # 1.0.1
 - Updated keywords.
 
