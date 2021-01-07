@@ -36,8 +36,8 @@
         "test": "npm run compile && node ./node_modules/vscode/bin/test"
     },
     "devDependencies": {
-        "@types/mocha": "^8.0.1",
-        "@types/node": "^13.9.5",
+        "@types/mocha": "^8.2.0",
+        "@types/node": "^13.13.39",
         "minimist": "^1.2.5",
         "tslint": "^6.1.0",
         "typescript": "^3.8.3",
