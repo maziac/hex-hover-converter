@@ -2,14 +2,18 @@
 
 If you like the "Hex Hover Converter" please consider supporting it.
 
-<a title="PayPal" href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=8S4R8HPXVCXUL&source=url">
-	<img src="images/btn_donate_SM.gif" />
+<a href="https://github.com/sponsors/maziac" title="Github sponsor">
+	<img src="assets/button_donate_sp.png" />
+</a>
+&nbsp;&nbsp;
+<a href="https://www.paypal.com/donate/?hosted_button_id=K6NNLZCTN3UV4&locale.x=en_DE&Z3JncnB0=" title="PayPal">
+	<img src="assets/button_donate_pp.png" />
 </a>
 
 
 # Hex Hover Converter
 
-![](images/hex-hover-converter.gif)
+![](assets/hex-hover-converter.gif)
 
 
 The "Hex Hover Converter" converts numbers into their decimal, hexadecimal and binary format.
