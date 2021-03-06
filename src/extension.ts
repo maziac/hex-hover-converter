@@ -157,8 +157,12 @@ function addColumn(lines: Array<string>, emphasizedLine: number, decValue: numbe
     const cells=new Array<string>(3);
     cells[0]=decValue.toString();
     cells[1] = hexValue.toString(16).toUpperCase();
-    const binString = binValue.toString(2);
-    cells[2] = (binString.length > 16 * 4) ? '-' : binString;
+    let binString = binValue.toString(2);
+    const binLen = 8 * (Math.floor((binString.length - 1) / 8) + 1);
+    binString = binString.padStart(binLen, '0');
+    cells[2] = (binString.length > 16 * 4) ? '-' : binString.replace(/\B(?=(\d{8})+(?!\d))/g, "'");
+
+
     // Emphasize
     cells[emphasizedLine]='**'+cells[emphasizedLine]+'**';
     lines[2]+=cells[0]+'|';
