@@ -2,6 +2,10 @@
 
 # Changelog
 
+# 1.1.2
+- Fixed accuracy problem for very large numbers. Issue #2.
+- Showing binary values now with separator.
+
 # 1.1.1
 - Added buttons.
 

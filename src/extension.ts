@@ -33,6 +33,10 @@ export function activate(context: vscode.ExtensionContext) {
                 if (match) {
                     // Decimal
                     const value = parseInt(hoveredWord, 10);
+                    // Check size
+                    if (Math.abs(value) > Number.MAX_SAFE_INTEGER)
+                        return;
+                    // Add
                     addColumn(lines, 0, value, value, value);
                     // Check if decimal was negative
                     const negMatch = /-\s*$/.exec(line);
@@ -53,6 +57,10 @@ export function activate(context: vscode.ExtensionContext) {
                     // Hexadecimal
                     const hexString = match[1];
                     value = parseInt(hexString, 16);
+                    // Check size
+                    if (Math.abs(value) > Number.MAX_SAFE_INTEGER)
+                        return;
+                    // Add
                     addColumn(lines, 1, value, value, value);
                     // Check if hex was negative
                     if (!noSignedValue) {
@@ -72,6 +80,10 @@ export function activate(context: vscode.ExtensionContext) {
                     // Binary
                     const binString = match[1];
                     value = parseInt(binString, 2);
+                    // Check size
+                    if (Math.abs(value) > Number.MAX_SAFE_INTEGER)
+                        return;
+                    // Add
                     addColumn(lines, 2, value, value, value);
                 }
 
@@ -144,8 +156,9 @@ function addColumn(lines: Array<string>, emphasizedLine: number, decValue: numbe
     lines[1]+=':--|';
     const cells=new Array<string>(3);
     cells[0]=decValue.toString();
-    cells[1]=hexValue.toString(16).toUpperCase();
-    cells[2]=binValue.toString(2);
+    cells[1] = hexValue.toString(16).toUpperCase();
+    const binString = binValue.toString(2);
+    cells[2] = (binString.length > 16 * 4) ? '-' : binString;
     // Emphasize
     cells[emphasizedLine]='**'+cells[emphasizedLine]+'**';
     lines[2]+=cells[0]+'|';
