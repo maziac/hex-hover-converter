@@ -2,7 +2,7 @@
     "name": "hex-hover-converter",
     "displayName": "Hex Hover Converter",
     "description": "Provides conversion between decimal, hex and binary numbers while hovering.",
-    "version": "1.1.1",
+    "version": "1.1.2",
     "publisher": "maziac",
     "license": "MIT",
     "keywords": [
@@ -17,7 +17,7 @@
         "url": "https://github.com/maziac/hex-hover-converter.git"
     },
     "engines": {
-        "vscode": "^1.35.1"
+        "vscode": "^1.54.0"
     },
     "categories": [
         "Other"
@@ -28,22 +28,17 @@
     ],
     "main": "./out/extension",
     "scripts": {
-        "vscode:prepublish": "npm run compile",
         "compile": "tsc -p ./",
-        "watch": "tsc -watch -p ./",
-        "preinstall": "npx npm-force-resolutions",
-        "postinstall": "node ./node_modules/vscode/bin/install",
-        "test": "npm run compile && node ./node_modules/vscode/bin/test"
+        "tslint": "eslint ./**/*.ts",
+        "watch": "tsc -w -p ./",
+        "test": "mocha -u tdd ./out/tests/",
+        "package": "vsce package",
+        "publish": "vsce publish"
     },
     "devDependencies": {
         "@types/mocha": "^8.2.0",
         "@types/node": "^13.13.39",
-        "minimist": "^1.2.5",
-        "tslint": "^6.1.0",
-        "typescript": "^3.8.3",
-        "vscode": "^1.1.36"
-    },
-    "resolutions": {
-        "minimist": "^1.2.5"
+        "@types/vscode": "^1.52.0",
+        "typescript": "^4.1.3"
     }
 }
