@@ -4,7 +4,7 @@ import * as vscode from 'vscode';
 export function activate(context: vscode.ExtensionContext) {
     const hoverProvider = vscode.languages.registerHoverProvider({scheme: '*', language: '*'}, {
         provideHover(document, position, token) {
-            const range = document.getWordRangeAtPosition(position, /(?<!\w)[\$0-9a-fA-FbhxulUL]+\b/)!;
+            const range = document.getWordRangeAtPosition(position, /(?<!\w)[\$0-9a-fA-FbhxulULHB_]+\b/)!;    // Note: for Verilog format: '[hHbBdD]... , e.g. 'h7123A for a hex number, b or B for a binary, d or D for a decimal
             if (!range)
                 return;
             let hoveredWord = document.getText(range);
@@ -45,17 +45,22 @@ export function activate(context: vscode.ExtensionContext) {
                 }
 
                 // Check for hex
-                match = /^0x([0-9a-fA-F]+)$/g.exec(hoveredWord);  // E.g. 0x12FA
+                match = /^0x([0-9a-fA-F_]+)$/g.exec(hoveredWord);  // E.g. 0x12FA
                 if (!match)
-                    match = /^\$([0-9a-fA-F]+)$/g.exec(hoveredWord);    // E.g. $AB4F
+                    match = /^\$([0-9a-fA-F_]+)$/g.exec(hoveredWord);    // E.g. $AB4F
                 if (!match)
-                    match = /^([0-9a-fA-F]+)h$/g.exec(hoveredWord);    // E.g. 07E2h
+                    match = /^([0-9a-fA-F_]+)h$/g.exec(hoveredWord);    // E.g. 07E2h
                 if (!match) {
-                    match = /^([0-9a-fA-F]+)$/g.exec(hoveredWord);    // E.g. F08A
+                    match = /^([0-9a-fA-F_]+)$/g.exec(hoveredWord);    // E.g. F08A
+                }
+                if (!match) {
+                    match = /^[h|H]([0-9a-fA-F_]+)$/g.exec(hoveredWord);    // E.g. hFFFF00, for Verilog
                 }
                 if (match) {
                     // Hexadecimal
-                    const hexString = match[1];
+                    const hString = match[1];
+                    // Remove underscores
+                    const hexString = hString.replace(/_/g, '');
                     value = parseInt(hexString, 16);
                     // Check size
                     if (Math.abs(value) > Number.MAX_SAFE_INTEGER)
@@ -76,6 +81,8 @@ export function activate(context: vscode.ExtensionContext) {
                 match = /^([01]+)b$/g.exec(hoveredWord);    // E.g. 10010b
                 if (!match)
                     match = /^0b([01]+)$/g.exec(hoveredWord);    // E.g. 0b01011
+                if (!match)
+                    match = /^[b|B]([01]+)$/g.exec(hoveredWord);    // E.g. b01011, Verilog
                 if (match) {
                     // Binary
                     const binString = match[1];
