@@ -13,8 +13,6 @@ export function activate(context: vscode.ExtensionContext) {
                 let r2 = new vscode.Range(range.start.line, 0, range.start.line, range.start.character);
                 vscode.Position;
                 const line = document.getText(r2);
-                let negativeDecValue;
-                let negativeHexValue;
 
                 // Check for Verilog formatting (Note it does not allow e.g 'sh only 'h)
                 const verilogMatch = /'\s*$/.exec(line);
@@ -45,12 +43,22 @@ export function activate(context: vscode.ExtensionContext) {
                     // Check size
                     if (Math.abs(value) > Number.MAX_SAFE_INTEGER)
                         return;
-                    // Add
-                    addColumn(lines, 0, value, value, value);
-                    // Check if decimal was negative
+
+                        // Check if decimal was negative
                     const negMatch = /-\s*$/.exec(line);
-                    if (negMatch != undefined)
-                        negativeDecValue = value;
+                    if (negMatch != undefined) {
+                        let negValue;
+                        if (value < 0x100)
+                            negValue = 0x100 - value;
+                        else if (value < 0x10000)
+                            negValue = 0x10000 - value;
+                        else
+                            negValue = 0x100000000 - value;
+                        addColumn(lines, 0, -value, negValue, negValue);
+                    }
+
+                    // Add positvie value
+                    addColumn(lines, 0, value, value, value);
                 }
 
                 // Check for Verilog hex
@@ -77,16 +85,27 @@ export function activate(context: vscode.ExtensionContext) {
                     // Check size
                     if (Math.abs(value) > Number.MAX_SAFE_INTEGER)
                         return;
-                    // Add
-                    addColumn(lines, 1, value, value, value);
+
                     // Check if hex was negative
                     if (!noSignedValue) {
                         const len = hexString.length;
                         if (hexString.charCodeAt(0) >= '8'.charCodeAt(0)) {
-                            if (len == 2 || len == 4 || len == 8)
-                                negativeHexValue = value;
+                            if (len == 2 || len == 4 || len == 8) {
+                                // Negative hex value
+                                let negValue;
+                                if (value < 0x100)
+                                    negValue = 0x100 - value;
+                                else if (value < 0x10000)
+                                    negValue = 0x10000 - value;
+                                else
+                                    negValue = 0x100000000 - value;
+                                addColumn(lines, 1, -negValue, value, value);
+                            }
                         }
                     }
+
+                    // Add positive hex value
+                    addColumn(lines, 1, value, value, value);
                 }
 
                 // Check for binary
@@ -107,32 +126,6 @@ export function activate(context: vscode.ExtensionContext) {
                         return;
                     // Add
                     addColumn(lines, 2, value, value, value);
-                }
-
-                // Check for negative decimal values
-                if (negativeDecValue != undefined) {
-                    const value = negativeDecValue;
-                    let negValue;
-                    if (value < 0x100)
-                        negValue = 0x100 - value;
-                    else if (value < 0x10000)
-                        negValue = 0x10000 - value;
-                    else
-                        negValue = 0x100000000 - value;
-                    addColumn(lines, 0, -negativeDecValue, negValue, negValue);
-                }
-
-                // Check for negative hex values
-                if (negativeHexValue != undefined) {
-                    const value = negativeHexValue;
-                    let negValue;
-                    if (value < 0x100)
-                        negValue = 0x100 - value;
-                    else if (value < 0x10000)
-                        negValue = 0x10000 - value;
-                    else
-                        negValue = 0x100000000 - value;
-                    addColumn(lines, 1, -negValue, negativeHexValue, negativeHexValue);
                 }
 
                 // Check if the value was converted and should be shown
@@ -174,8 +167,8 @@ function addColumn(lines: Array<string>, emphasizedLine: number, decValue: numbe
     }
 
     // Add column
-    lines[0] += ' | |';
-    lines[1] += ':--|:--|';
+    lines[0] += ' |';
+    lines[1] += ':--|';
     const cells = new Array<string>(3);
     cells[0] = decValue.toString();
     cells[1] = hexValue.toString(16).toUpperCase();
@@ -187,7 +180,7 @@ function addColumn(lines: Array<string>, emphasizedLine: number, decValue: numbe
 
     // Emphasize
     cells[emphasizedLine] = '**' + cells[emphasizedLine] + '**';
-    lines[2] += cells[0] + '|\\||';
-    lines[3] += cells[1] + '|\\||';
-    lines[4] += cells[2] + '|\\||';
+    lines[2] += cells[0] + '|';
+    lines[3] += cells[1] + '|';
+    lines[4] += cells[2] + '|';
 }
