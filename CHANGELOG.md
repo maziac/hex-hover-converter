@@ -1,5 +1,8 @@
 # Changelog
 
+# 1.2.1
+- Better Verilog support. Also d supported.
+
 # 1.2.0
 - Feature request #3: Support for SystemVerilog number format, hex and binary formats are supported now (e.g. 'h7F123A).
 - Allows now underscores to be separators for the hex number, e.g. 0xAABB_CCDD.

@@ -16,6 +16,9 @@ export function activate(context: vscode.ExtensionContext) {
                 let negativeDecValue;
                 let negativeHexValue;
 
+                // Check for Verilog formatting (Note it does not allow e.g 'sh only 'h)
+                const verilogMatch = /'\s*$/.exec(line);
+
                 // Check formatting
                 let match;
                 let value;
@@ -29,10 +32,16 @@ export function activate(context: vscode.ExtensionContext) {
                 const noSignedValue = (ulMatch[2].toLowerCase().indexOf('u') >= 0);
 
                 // Check for decimal
-                match = /^([0-9]+)$/g.exec(hoveredWord);  // E.g. 1234
+                if (verilogMatch) {
+                    match = /^d([0-9]+)$/gi.exec(hoveredWord);  // E.g. 'd1234
+                }
+                else {
+                    match = /^([0-9]+)$/g.exec(hoveredWord);  // E.g. 1234
+                }
                 if (match) {
                     // Decimal
-                    const value = parseInt(hoveredWord, 10);
+                    const decString = match[1];
+                    const value = parseInt(decString, 10);
                     // Check size
                     if (Math.abs(value) > Number.MAX_SAFE_INTEGER)
                         return;
@@ -44,17 +53,20 @@ export function activate(context: vscode.ExtensionContext) {
                         negativeDecValue = value;
                 }
 
-                // Check for hex
-                match = /^0x([0-9a-fA-F_]+)$/g.exec(hoveredWord);  // E.g. 0x12FA
-                if (!match)
-                    match = /^\$([0-9a-fA-F_]+)$/g.exec(hoveredWord);    // E.g. $AB4F
-                if (!match)
-                    match = /^([0-9a-fA-F_]+)h$/g.exec(hoveredWord);    // E.g. 07E2h
-                if (!match) {
-                    match = /^([0-9a-fA-F_]+)$/g.exec(hoveredWord);    // E.g. F08A
+                // Check for Verilog hex
+                if (verilogMatch) {
+                    match = /^h([0-9a-f_]+)$/gi.exec(hoveredWord);    // E.g. hFFFF00, for Verilog
                 }
-                if (!match) {
-                    match = /^[h|H]([0-9a-fA-F_]+)$/g.exec(hoveredWord);    // E.g. hFFFF00, for Verilog
+                else {
+                    // Check for hex
+                    match = /^0x([0-9a-fA-F_]+)$/g.exec(hoveredWord);  // E.g. 0x12FA
+                    if (!match)
+                        match = /^\$([0-9a-f_]+)$/gi.exec(hoveredWord);    // E.g. $AB4F
+                    if (!match)
+                        match = /^([0-9a-fA-F_]+)h$/g.exec(hoveredWord);    // E.g. 07E2h
+                    if (!match) {
+                        match = /^([0-9a-f_]+)$/gi.exec(hoveredWord);    // E.g. F08A
+                    }
                 }
                 if (match) {
                     // Hexadecimal
@@ -78,11 +90,14 @@ export function activate(context: vscode.ExtensionContext) {
                 }
 
                 // Check for binary
-                match = /^([01]+)b$/g.exec(hoveredWord);    // E.g. 10010b
-                if (!match)
-                    match = /^0b([01]+)$/g.exec(hoveredWord);    // E.g. 0b01011
-                if (!match)
-                    match = /^[b|B]([01]+)$/g.exec(hoveredWord);    // E.g. b01011, Verilog
+                if (verilogMatch) {
+                    match = /^b([01]+)$/gi.exec(hoveredWord);    // E.g. b01011, Verilog
+                }
+                else {
+                    match = /^([01]+)b$/g.exec(hoveredWord);    // E.g. 10010b
+                    if (!match)
+                        match = /^0b([01]+)$/g.exec(hoveredWord);    // E.g. 0b01011
+                }
                 if (match) {
                     // Binary
                     const binString = match[1];
@@ -124,8 +139,8 @@ export function activate(context: vscode.ExtensionContext) {
                 if (lines.length != 0) {
                     // Display in a Markdown table
                     const mdText = new vscode.MarkdownString();
-                    for (let i = 0; i < 5; i++)
-                        mdText.appendMarkdown(lines[i] + '\n');
+                    for (let line of lines)
+                        mdText.appendMarkdown(line + '\n');
                     return new vscode.Hover(mdText);
                 }
             }
@@ -148,7 +163,7 @@ export function deactivate() {
  */
 function addColumn(lines: Array<string>, emphasizedLine: number, decValue: number, hexValue: number, binValue: number) {
     // Create table if not yet existing
-    if (lines.length==0) {
+    if (lines.length == 0) {
         // Set lines for table
         lines.push('| |');
         //let line1='|'+isDecNegative+',"'+line+'"|'+hoveredWord+'|';   // For testing
@@ -159,20 +174,20 @@ function addColumn(lines: Array<string>, emphasizedLine: number, decValue: numbe
     }
 
     // Add column
-    lines[0]+=' |';
-    lines[1]+=':--|';
-    const cells=new Array<string>(3);
-    cells[0]=decValue.toString();
+    lines[0] += ' | |';
+    lines[1] += ':--|:--|';
+    const cells = new Array<string>(3);
+    cells[0] = decValue.toString();
     cells[1] = hexValue.toString(16).toUpperCase();
     let binString = binValue.toString(2);
     const binLen = 8 * (Math.floor((binString.length - 1) / 8) + 1);
     binString = binString.padStart(binLen, '0');
-    cells[2] = (binString.length > 16 * 4) ? '-' : binString.replace(/\B(?=(\d{8})+(?!\d))/g, "'");
+    cells[2] = (binString.length > 16 * 4) ? '-' : binString.replace(/\B(?=(\d{8})+(?!\d))/g, "'"); //Hyphen every 8th digit
 
 
     // Emphasize
-    cells[emphasizedLine]='**'+cells[emphasizedLine]+'**';
-    lines[2]+=cells[0]+'|';
-    lines[3]+=cells[1]+'|';
-    lines[4]+=cells[2]+'|';
+    cells[emphasizedLine] = '**' + cells[emphasizedLine] + '**';
+    lines[2] += cells[0] + '|\\||';
+    lines[3] += cells[1] + '|\\||';
+    lines[4] += cells[2] + '|\\||';
 }
