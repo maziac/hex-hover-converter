@@ -1,4 +1,3 @@
-'use strict';
 import * as vscode from 'vscode';
 
 export function activate(context: vscode.ExtensionContext) {
@@ -10,16 +9,15 @@ export function activate(context: vscode.ExtensionContext) {
             let hoveredWord = document.getText(range);
             if (hoveredWord) {
                 // Check if negative
-                let r2 = new vscode.Range(range.start.line, 0, range.start.line, range.start.character);
-                vscode.Position;
+                const r2 = new vscode.Range(range.start.line, 0, range.start.line, range.start.character);
                 const line = document.getText(r2);
 
                 // Check for Verilog formatting (Note it does not allow e.g 'sh only 'h)
                 const verilogMatch = /'\s*$/.exec(line);
 
                 // Check formatting
-                let match;
-                let value;
+                let match: RegExpExecArray | null;
+                let value: bigint;
                 const lines = new Array<string>();
 
                 // Check if it ends with U and or L
