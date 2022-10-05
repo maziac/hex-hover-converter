@@ -24,7 +24,7 @@
     ],
     "icon": "assets/icon.png",
     "activationEvents": [
-        "workspaceContains:*"
+        "*"
     ],
     "main": "./out/extension",
     "scripts": {
