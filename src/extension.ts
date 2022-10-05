@@ -4,7 +4,7 @@ import * as vscode from 'vscode';
 export function activate(context: vscode.ExtensionContext) {
     const hoverProvider = vscode.languages.registerHoverProvider({scheme: '*', language: '*'}, {
         provideHover(document, position, token) {
-            const range = document.getWordRangeAtPosition(position, /(?<!\w)[\$0-9a-fA-FbhxulULHB_]+\b/)!;    // Note: for Verilog format: '[hHbBdD]... , e.g. 'h7123A for a hex number, b or B for a binary, d or D for a decimal
+            const range = document.getWordRangeAtPosition(position, /(?<!\w)[0-9a-fA-FbhxulULHB_]+\b/)!;    // Note: for Verilog format: '[hHbBdD]... , e.g. 'h7123A for a hex number, b or B for a binary, d or D for a decimal
             if (!range)
                 return;
             let hoveredWord = document.getText(range);
@@ -68,8 +68,6 @@ export function activate(context: vscode.ExtensionContext) {
                 else {
                     // Check for hex
                     match = /^0x([0-9a-fA-F_]+)$/g.exec(hoveredWord);  // E.g. 0x12FA
-                    if (!match)
-                        match = /^\$([0-9a-f_]+)$/gi.exec(hoveredWord);    // E.g. $AB4F
                     if (!match)
                         match = /^([0-9a-fA-F_]+)h$/g.exec(hoveredWord);    // E.g. 07E2h
                     if (!match) {
