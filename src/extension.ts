@@ -39,21 +39,18 @@ export function activate(context: vscode.ExtensionContext) {
                 if (match) {
                     // Decimal
                     const decString = match[1];
-                    const value = parseInt(decString, 10);
-                    // Check size
-                    if (Math.abs(value) > Number.MAX_SAFE_INTEGER)
-                        return;
+                    const value = BigInt(decString);
 
                         // Check if decimal was negative
                     const negMatch = /-\s*$/.exec(line);
                     if (negMatch != undefined) {
-                        let negValue;
-                        if (value < 0x100)
-                            negValue = 0x100 - value;
-                        else if (value < 0x10000)
-                            negValue = 0x10000 - value;
+                        let negValue: bigint;
+                        if (value < 0x100n)
+                            negValue = 0x100n - value;
+                        else if (value < 0x10000n)
+                            negValue = 0x10000n - value;
                         else
-                            negValue = 0x100000000 - value;
+                            negValue = 0x100000000n - value;
                         addColumn(lines, 0, -value, negValue, negValue);
                     }
 
@@ -79,10 +76,7 @@ export function activate(context: vscode.ExtensionContext) {
                     const hString = match[1];
                     // Remove underscores
                     const hexString = hString.replace(/_/g, '');
-                    value = parseInt(hexString, 16);
-                    // Check size
-                    if (Math.abs(value) > Number.MAX_SAFE_INTEGER)
-                        return;
+                    value = BigInt('0x' + hexString);
 
                     // Check if hex was negative
                     if (!noSignedValue) {
@@ -90,13 +84,13 @@ export function activate(context: vscode.ExtensionContext) {
                         if (hexString.charCodeAt(0) >= '8'.charCodeAt(0)) {
                             if (len == 2 || len == 4 || len == 8) {
                                 // Negative hex value
-                                let negValue;
-                                if (value < 0x100)
-                                    negValue = 0x100 - value;
-                                else if (value < 0x10000)
-                                    negValue = 0x10000 - value;
+                                let negValue: bigint;
+                                if (value < 0x100n)
+                                    negValue = 0x100n - value;
+                                else if (value < 0x10000n)
+                                    negValue = 0x10000n - value;
                                 else
-                                    negValue = 0x100000000 - value;
+                                    negValue = 0x100000000n - value;
                                 addColumn(lines, 1, -negValue, value, value);
                             }
                         }
@@ -118,10 +112,7 @@ export function activate(context: vscode.ExtensionContext) {
                 if (match) {
                     // Binary
                     const binString = match[1];
-                    value = parseInt(binString, 2);
-                    // Check size
-                    if (Math.abs(value) > Number.MAX_SAFE_INTEGER)
-                        return;
+                    value = BigInt('0b' + binString);
                     // Add
                     addColumn(lines, 2, value, value, value);
                 }
@@ -152,7 +143,7 @@ export function deactivate() {
  * @param hexValue The hex value to show.
  * @param binValue The binary value to show.
  */
-function addColumn(lines: Array<string>, emphasizedLine: number, decValue: number, hexValue: number, binValue: number) {
+function addColumn(lines: Array<string>, emphasizedLine: number, decValue: bigint, hexValue: bigint, binValue: bigint) {
     // Create table if not yet existing
     if (lines.length == 0) {
         // Set lines for table
