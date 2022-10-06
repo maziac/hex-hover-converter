@@ -29,10 +29,10 @@ export function activate(context: vscode.ExtensionContext) {
 
                 // Check for decimal
                 if (verilogMatch) {
-                    match = /^d([0-9]+)$/gi.exec(hoveredWord);  // E.g. 'd1234
+                    match = /^d(\d+)$/gi.exec(hoveredWord);  // E.g. 'd1234
                 }
                 else {
-                    match = /^([0-9]+)$/g.exec(hoveredWord);  // E.g. 1234
+                    match = /^(\d+)$/g.exec(hoveredWord);  // E.g. 1234
                 }
                 if (match) {
                     // Decimal
@@ -120,8 +120,6 @@ export function activate(context: vscode.ExtensionContext) {
     context.subscriptions.push(hoverProvider);
 }
 
-export function deactivate() {
-}
 
 
 /**
