@@ -1,25 +1,23 @@
-'use strict';
 import * as vscode from 'vscode';
 
 export function activate(context: vscode.ExtensionContext) {
     const hoverProvider = vscode.languages.registerHoverProvider({scheme: '*', language: '*'}, {
         provideHover(document, position, token) {
-            const range = document.getWordRangeAtPosition(position, /(?<!\w)[\$0-9a-fA-FbhxulULHB_]+\b/)!;    // Note: for Verilog format: '[hHbBdD]... , e.g. 'h7123A for a hex number, b or B for a binary, d or D for a decimal
+            const range = document.getWordRangeAtPosition(position, /(?<!\w)[0-9a-fA-FbhxulULHB_]+\b/)!;    // Note: for Verilog format: '[hHbBdD]... , e.g. 'h7123A for a hex number, b or B for a binary, d or D for a decimal
             if (!range)
                 return;
             let hoveredWord = document.getText(range);
             if (hoveredWord) {
                 // Check if negative
-                let r2 = new vscode.Range(range.start.line, 0, range.start.line, range.start.character);
-                vscode.Position;
+                const r2 = new vscode.Range(range.start.line, 0, range.start.line, range.start.character);
                 const line = document.getText(r2);
 
                 // Check for Verilog formatting (Note it does not allow e.g 'sh only 'h)
                 const verilogMatch = /'\s*$/.exec(line);
 
                 // Check formatting
-                let match;
-                let value;
+                let match: RegExpExecArray | null;
+                let value: bigint;
                 const lines = new Array<string>();
 
                 // Check if it ends with U and or L
@@ -39,21 +37,14 @@ export function activate(context: vscode.ExtensionContext) {
                 if (match) {
                     // Decimal
                     const decString = match[1];
-                    const value = parseInt(decString, 10);
-                    // Check size
-                    if (Math.abs(value) > Number.MAX_SAFE_INTEGER)
-                        return;
+                    const value = BigInt(decString);
 
-                        // Check if decimal was negative
+                    // Check if decimal was negative
                     const negMatch = /-\s*$/.exec(line);
-                    if (negMatch != undefined) {
-                        let negValue;
-                        if (value < 0x100)
-                            negValue = 0x100 - value;
-                        else if (value < 0x10000)
-                            negValue = 0x10000 - value;
-                        else
-                            negValue = 0x100000000 - value;
+                    if (negMatch) {
+                        // Round to next power of 2 (i.e. 16-bit, 32-bit, 64-bit, ...)
+                        const len = 2 ** Math.ceil(Math.log2(value.toString(16).length));
+                        const negValue = 2n ** (4n * BigInt(len)) - value;
                         addColumn(lines, 0, -value, negValue, negValue);
                     }
 
@@ -69,8 +60,6 @@ export function activate(context: vscode.ExtensionContext) {
                     // Check for hex
                     match = /^0x([0-9a-fA-F_]+)$/g.exec(hoveredWord);  // E.g. 0x12FA
                     if (!match)
-                        match = /^\$([0-9a-f_]+)$/gi.exec(hoveredWord);    // E.g. $AB4F
-                    if (!match)
                         match = /^([0-9a-fA-F_]+)h$/g.exec(hoveredWord);    // E.g. 07E2h
                     if (!match) {
                         match = /^([0-9a-f_]+)$/gi.exec(hoveredWord);    // E.g. F08A
@@ -81,24 +70,16 @@ export function activate(context: vscode.ExtensionContext) {
                     const hString = match[1];
                     // Remove underscores
                     const hexString = hString.replace(/_/g, '');
-                    value = parseInt(hexString, 16);
-                    // Check size
-                    if (Math.abs(value) > Number.MAX_SAFE_INTEGER)
-                        return;
+                    value = BigInt('0x' + hexString);
 
                     // Check if hex was negative
                     if (!noSignedValue) {
                         const len = hexString.length;
                         if (hexString.charCodeAt(0) >= '8'.charCodeAt(0)) {
-                            if (len == 2 || len == 4 || len == 8) {
+                            // Check if length is power of 2
+                            if (len > 1 && (len & -len) === len) {
                                 // Negative hex value
-                                let negValue;
-                                if (value < 0x100)
-                                    negValue = 0x100 - value;
-                                else if (value < 0x10000)
-                                    negValue = 0x10000 - value;
-                                else
-                                    negValue = 0x100000000 - value;
+                                const negValue = 2n ** (4n * BigInt(len)) - value;
                                 addColumn(lines, 1, -negValue, value, value);
                             }
                         }
@@ -120,10 +101,7 @@ export function activate(context: vscode.ExtensionContext) {
                 if (match) {
                     // Binary
                     const binString = match[1];
-                    value = parseInt(binString, 2);
-                    // Check size
-                    if (Math.abs(value) > Number.MAX_SAFE_INTEGER)
-                        return;
+                    value = BigInt('0b' + binString);
                     // Add
                     addColumn(lines, 2, value, value, value);
                 }
@@ -154,7 +132,7 @@ export function deactivate() {
  * @param hexValue The hex value to show.
  * @param binValue The binary value to show.
  */
-function addColumn(lines: Array<string>, emphasizedLine: number, decValue: number, hexValue: number, binValue: number) {
+function addColumn(lines: Array<string>, emphasizedLine: number, decValue: bigint, hexValue: bigint, binValue: bigint) {
     // Create table if not yet existing
     if (lines.length == 0) {
         // Set lines for table
