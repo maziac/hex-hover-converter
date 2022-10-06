@@ -1,5 +1,9 @@
 # Changelog
 
+# 1.2.2
+- Thanks to contribution from appden: Support numbers larger than 53-bits and immediates in assembly
+- The "$" recognition as prefix for hex has been removed. This still works but is now more ambiguous.
+
 # 1.2.1
 - Better Verilog support. Also d supported.
 - Changed order of display (negative numbers first).

@@ -13,7 +13,6 @@
 				"${workspaceFolder}/out/**/*.js"
 			],
 			"preLaunchTask": "${defaultBuildTask}"
-			"sourceMaps": true,
 		}
 	]
 }
