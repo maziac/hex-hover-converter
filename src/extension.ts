@@ -39,16 +39,12 @@ export function activate(context: vscode.ExtensionContext) {
                     const decString = match[1];
                     const value = BigInt(decString);
 
-                        // Check if decimal was negative
+                    // Check if decimal was negative
                     const negMatch = /-\s*$/.exec(line);
-                    if (negMatch != undefined) {
-                        let negValue: bigint;
-                        if (value < 0x100n)
-                            negValue = 0x100n - value;
-                        else if (value < 0x10000n)
-                            negValue = 0x10000n - value;
-                        else
-                            negValue = 0x100000000n - value;
+                    if (negMatch) {
+                        // Round to next power of 2 (i.e. 16-bit, 32-bit, 64-bit, ...)
+                        const len = 2 ** Math.ceil(Math.log2(value.toString(16).length));
+                        const negValue = 2n ** (4n * BigInt(len)) - value;
                         addColumn(lines, 0, -value, negValue, negValue);
                     }
 
