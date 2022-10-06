@@ -80,15 +80,10 @@ export function activate(context: vscode.ExtensionContext) {
                     if (!noSignedValue) {
                         const len = hexString.length;
                         if (hexString.charCodeAt(0) >= '8'.charCodeAt(0)) {
-                            if (len == 2 || len == 4 || len == 8) {
+                            // Check if length is power of 2
+                            if (len > 1 && (len & -len) === len) {
                                 // Negative hex value
-                                let negValue: bigint;
-                                if (value < 0x100n)
-                                    negValue = 0x100n - value;
-                                else if (value < 0x10000n)
-                                    negValue = 0x10000n - value;
-                                else
-                                    negValue = 0x100000000n - value;
+                                const negValue = 2n ** (4n * BigInt(len)) - value;
                                 addColumn(lines, 1, -negValue, value, value);
                             }
                         }
