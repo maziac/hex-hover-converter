@@ -40,5 +40,11 @@
         "@types/node": "18.8.2",
         "@types/vscode": "^1.71.0",
         "typescript": "^4.8.4"
-    }
+    },
+    "commands": [
+        {
+            "command": "hexHover.replace",
+            "title": "Replace hovered value"
+        }
+    ]
 }

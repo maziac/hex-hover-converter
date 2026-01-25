@@ -1,11 +1,18 @@
 import * as vscode from 'vscode';
 
+let lastHoverRange: vscode.Range | undefined; // Stores the range currently hovered
+let lastHoverDocument: vscode.Uri | undefined; // Stores which document contains the hover
+
 export function activate(context: vscode.ExtensionContext) {
     const hoverProvider = vscode.languages.registerHoverProvider({scheme: '*', language: '*'}, {
         provideHover(document, position, token) {
             const range = document.getWordRangeAtPosition(position, /(?<!\w)[0-9a-fA-FbhxulULHB_]+\b/)!;    // NOSONAR. Note: for Verilog format: '[hHbBdD]... , e.g. 'h7123A for a hex number, b or B for a binary, d or D for a decimal
             if (!range)
                 return;
+            // Save the range and document where the hover is
+            lastHoverRange = range;
+            lastHoverDocument = document.uri;
+            
             let hoveredWord = document.getText(range);
             if (hoveredWord) {
                 // Check if negative
@@ -110,6 +117,8 @@ export function activate(context: vscode.ExtensionContext) {
                 if (lines.length != 0) {
                     // Display in a Markdown table
                     const mdText = new vscode.MarkdownString();
+                    // Allow executing a command from a link in the markdown
+                    mdText.isTrusted = true;
                     for (let line of lines)
                         mdText.appendMarkdown(line + '\n');
                     return new vscode.Hover(mdText);
@@ -118,9 +127,37 @@ export function activate(context: vscode.ExtensionContext) {
         }
     });
     context.subscriptions.push(hoverProvider);
+
+    // Add a command used to replace the currently hovered range by the string received as argument
+    context.subscriptions.push(
+        vscode.commands.registerCommand(
+            "hexHover.replace",
+            async (args) => {
+                // Check that a string has been provided for replacement
+                if (!args || typeof args.value !== 'string') {
+                    return;
+                }
+                // Check that the editor can be edited and that a range is selected
+                const editor = vscode.window.activeTextEditor;
+                if (!editor || !lastHoverRange || !lastHoverDocument) {
+                    return;
+                }
+                // Check that the current editor is the same as the one where the hover is
+                if (editor.document.uri.toString() !== lastHoverDocument.toString()) {
+                    return;
+                }
+                // Replace the number with the new string
+                await editor.edit(editBuilder => {
+                    editBuilder.replace(lastHoverRange, args.value);
+                });
+                // Close the hover
+                await vscode.commands.executeCommand('editor.action.hideHover');
+                lastHoverRange = undefined;
+                lastHoverDocument = undefined;
+            }
+        )
+    );
 }
-
-
 
 /**
  * Adds a colum to the table.
@@ -146,17 +183,32 @@ function addColumn(lines: Array<string>, emphasizedLine: number, decValue: bigin
     lines[0] += ' |';
     lines[1] += ':--|';
     const cells = new Array<string>(3);
-    cells[0] = decValue.toString();
-    cells[1] = hexValue.toString(16).toUpperCase();
+    const decText = decValue.toString();
+    const hexText = '0x' + hexValue.toString(16).toUpperCase();
     let binString = binValue.toString(2);
     const binLen = 8 * (Math.floor((binString.length - 1) / 8) + 1);
     binString = binString.padStart(binLen, '0');
-    cells[2] = (binString.length > 16 * 4) ? '-' : binString.replace(/\B(?=(\d{8})+(?!\d))/g, "'"); //Hyphen every 8th digit
+    //Hyphen every 8th digit
+    let binText =  (binString.length > 16 * 4 ? '-' : '0b' + binString.replace(/\B(?=(\d{8})+(?!\d))/g, "'"));
+    binString = '0b' + binString;
 
+    // Either add the raw value, or add the link to convert the value 
+    cells[0] = emphasizedLine == 0 ? decText : makeReplaceLink(decText, decText);
+    cells[1] = emphasizedLine == 1 ? hexText : makeReplaceLink(hexText, hexText);
+    cells[2] = emphasizedLine == 2 ? binText : makeReplaceLink(binText, binString);
 
-    // Emphasize
-    cells[emphasizedLine] = '**' + cells[emphasizedLine] + '**';
     lines[2] += cells[0] + '|';
     lines[3] += cells[1] + '|';
     lines[4] += cells[2] + '|';
+}
+
+/**
+ * Create a markdown link that calls the "hexHover.replace" command
+ * @param {string} label The visible part of the link
+ * @param {string} value The value that will be sent to replace command
+ * @returns The markdown link
+ */
+function makeReplaceLink(label: string, value: string) {
+    const arg = encodeURIComponent(JSON.stringify({ value }));
+    return `[${label}](command:hexHover.replace?${arg})`;
 }
