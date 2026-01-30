@@ -1,7 +1,9 @@
 import * as vscode from 'vscode';
 
-let lastHoverRange: vscode.Range | undefined; // Stores the range currently hovered
-let lastHoverDocument: vscode.Uri | undefined; // Stores which document contains the hover
+// Stores the range currently hovered
+let lastHoverRange: vscode.Range = new vscode.Range(new vscode.Position(0,0), new vscode.Position(0,0));
+// Stores which document contains the hover
+let lastHoverDocument: vscode.Uri | undefined;
 
 export function activate(context: vscode.ExtensionContext) {
     const hoverProvider = vscode.languages.registerHoverProvider({scheme: '*', language: '*'}, {
@@ -139,7 +141,7 @@ export function activate(context: vscode.ExtensionContext) {
                 }
                 // Check that the editor can be edited and that a range is selected
                 const editor = vscode.window.activeTextEditor;
-                if (!editor || !lastHoverRange || !lastHoverDocument) {
+                if (!editor || !lastHoverDocument || lastHoverRange.isEmpty) {
                     return;
                 }
                 // Check that the current editor is the same as the one where the hover is
@@ -152,7 +154,9 @@ export function activate(context: vscode.ExtensionContext) {
                 });
                 // Close the hover
                 await vscode.commands.executeCommand('editor.action.hideHover');
-                lastHoverRange = undefined;
+                // Reset the range
+                lastHoverRange.start.with(0,0);
+                lastHoverRange.end.with(0,0);
                 lastHoverDocument = undefined;
             }
         )
