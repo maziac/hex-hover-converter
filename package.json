@@ -2,7 +2,7 @@
     "name": "hex-hover-converter",
     "displayName": "Hex Hover Converter",
     "description": "Provides conversion between decimal, hex and binary numbers while hovering.",
-    "version": "1.2.2",
+    "version": "2.0.0-rc1",
     "publisher": "maziac",
     "license": "MIT",
     "keywords": [
@@ -27,6 +27,43 @@
         "onStartupFinished"
     ],
     "main": "./out/extension",
+    "contributes": {
+        "configuration": {
+            "type": "object",
+            "title": "Hex Hover Converter",
+            "properties": {
+                "hexHoverConverter.formatString.Decimal": {
+                    "type": "string",
+                    "default": "{dec} → <0x{dec_to_hex}>, <0b{dec_to_bin}>",
+                    "description": "Format string for decimal source values.\nAny text inside <...> brackets will be replaced with the corresponding value.\nUse the following variables: {dec} for the hovered decimal value, {dec_to_hex} for the converted hexadecimal value, and {dec_to_bin} for the converted binary value.\nClear this string to omit the conversion.",
+                    "order": 10
+                },
+                "hexHoverConverter.formatString.SignedDecimal": {
+                    "type": "string",
+                    "default": "{sdec} → <0x{sdec_to_hex}>, <0b{sdec_to_bin}>",
+                    "description": "Format string for signed decimal source values.\nThis will be used only if the decimal value is prepended by a minus sign.\nAny text inside <...> brackets will be replaced with the corresponding value.\nUse the following variables: {sdec} for the hovered signed decimal value, {sdec_to_hex} for the converted hexadecimal value, and {sdec_to_bin} for the converted binary value.\nClear this string to omit the conversion.",
+                    "order": 11
+                },
+                "hexHoverConverter.formatString.Hexadecimal": {
+                    "type": "string",
+                    "default": "0x{hex} → <0x{hex_to_dec}>, <0b{hex_to_bin}>",
+                    "description": "Format string for hexadecimal source value.\nAny text inside <...> brackets will be replaced with the corresponding value.\nUse the following variables: {hex} for the hovered decimal value, {hex_to_dec} for the converted hexadecimal value, and {hex_to_bin} for the converted binary value.\nClear this string to omit the conversion.",
+                    "order": 12
+                },
+                "hexHoverConverter.formatString.Binary": {
+                    "type": "string",
+                    "default": "0b{bin} → <0x{bin_to_hex}>, <0b{bin_to_dec}>",
+                    "description": "Format string for binary source value.\nAny text inside <...> brackets will be replaced with the corresponding value.\nUse the following variables: {bin} for the hovered binary value, {bin_to_hex} for the converted hexadecimal value, and {bin_to_dec} for the converted decimal value.\nClear this string to omit the conversion.",
+                    "order": 13
+                },
+                "hexHoverConverter.hexRecognition.strict": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Recognize hexadecimal numbers only if they have a prefix (e.g., 0x or $) or suffix (e.g., h)."
+                }
+            }
+        }
+    },
     "scripts": {
         "compile": "tsc -p ./",
         "tslint": "eslint ./**/*.ts",

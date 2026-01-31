@@ -12,6 +12,9 @@ export function activate(context: vscode.ExtensionContext) {
             if (!hoveredWord)
                 return;
 
+            // Get configuration
+            const config = vscode.workspace.getConfiguration('hexHoverConverter');
+
             // Variables
             const vars = new Vars(document, range);
 
@@ -70,7 +73,9 @@ export function activate(context: vscode.ExtensionContext) {
                 if (!match)
                     match = /^([0-9a-fA-F_]+)h$/g.exec(hoveredWord);    // E.g. 07E2h
                 if (!match) {
-                    match = /^([0-9a-f_]+)$/gi.exec(hoveredWord);    // E.g. F08A
+                    const strictHex = config.get<boolean>('hexRecognition.strict', false);
+                    if (!strictHex)
+                        match = /^([0-9a-f_]+)$/gi.exec(hoveredWord);    // E.g. F08A
                 }
             }
             if (match) {
@@ -116,18 +121,18 @@ export function activate(context: vscode.ExtensionContext) {
             }
 
             // Replace in format string
-            let srcDecFormat = "{dec} → <0x{dec_to_hex}>, <0b{dec_to_bin}>";
-            let srcIDecFormat = "{sdec} → <0x{sdec_to_hex}>, <0b{sdec_to_bin}>";
-            let srcHexFormat = "0x{hex} → <{hex_to_dec}>, <0b{hex_to_bin}>";
-            let srcBinFormat = "0b{bin} → <0x{bin_to_hex}>, <{bin_to_dec}>";
+            const srcDecFormat = config.get<string>('formatString.Decimal', "").trim();
+            const srcIDecFormat = config.get<string>('formatString.SignedDecimal', "").trim();
+            const srcHexFormat = config.get<string>('formatString.Hexadecimal', "").trim();
+            const srcBinFormat = config.get<string>('formatString.Binary', "").trim();
             let result = '';
-            if (vars.srcDec !== undefined)
+            if (vars.srcDec)
                 result += vars.formatString(srcDecFormat) + "\n\n";
-            if (vars.srcSDec !== undefined)
+            if (vars.srcSDec)
                 result += '\n' + vars.formatString(srcIDecFormat) + "\n\n";
-            if (vars.srcHex !== undefined)
+            if (vars.srcHex)
                 result += vars.formatString(srcHexFormat) + "\n\n";
-            if (vars.srcBin !== undefined)
+            if (vars.srcBin)
                 result += vars.formatString(srcBinFormat) + "\n\n";
             console.log(result); // For testing
 
@@ -242,8 +247,7 @@ class Vars {
                 range_end_line: this.range.end.line,
                 range_end_character: this.range.end.character,
             }));
-            const replacement = `[${p1}](command:hexHover._replace?${args})`;
-            console.log('replacement = ' + replacement); // For testing
+            const replacement = `[${p1}](command:hexHover._replace?${args} "Replace hovered value with ${p1}")`;
             return replacement;
         });
 
