@@ -73,6 +73,10 @@ export function activate(context: vscode.ExtensionContext) {
                 if (!match)
                     match = /^([0-9a-fA-F_]+)h$/g.exec(hoveredWord);    // E.g. 07E2h
                 if (!match) {
+                    if (line.endsWith('$'))
+                        match = /^([0-9a-fA-F_]+)$/g.exec(hoveredWord);    // E.g. $07E2
+                }
+                if (!match) {
                     const strictHex = config.get<boolean>('hexRecognition.strict', false);
                     if (!strictHex)
                         match = /^([0-9a-f_]+)$/gi.exec(hoveredWord);    // E.g. F08A
