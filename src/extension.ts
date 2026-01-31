@@ -2,6 +2,7 @@ import * as vscode from 'vscode';
 
 
 export function activate(context: vscode.ExtensionContext) {
+    // Provide hover
     const hoverProvider = vscode.languages.registerHoverProvider({scheme: '*', language: '*'}, {
         provideHover(document, position, _token) {
             const range = document.getWordRangeAtPosition(position, /(?<!\w)[0-9a-fA-FbhxulULHB_]+\b/)!;    // NOSONAR. Note: for Verilog format: '[hHbBdD]... , e.g. 'h7123A for a hex number, b or B for a binary, d or D for a decimal
@@ -12,7 +13,7 @@ export function activate(context: vscode.ExtensionContext) {
                 return;
 
             // Variables
-            const vars = new Vars();
+            const vars = new Vars(document, range);
 
             // Check if negative
             const r2 = new vscode.Range(range.start.line, 0, range.start.line, range.start.character);
@@ -115,10 +116,10 @@ export function activate(context: vscode.ExtensionContext) {
             }
 
             // Replace in format string
-            let srcDecFormat = "{dec} -> <0x{dec_to_hex}>, <0b{dec_to_bin}>";
-            let srcIDecFormat = "{sdec} -> <0x{sdec_to_hex}>, <0b{sdec_to_bin}>";
-            let srcHexFormat = "0x{hex} -> <{hex_to_dec}>, <0b{hex_to_bin}>";
-            let srcBinFormat = "0b{bin} -> <0x{bin_to_hex}>, <{bin_to_dec}>";
+            let srcDecFormat = "{dec} → <0x{dec_to_hex}>, <0b{dec_to_bin}>";
+            let srcIDecFormat = "{sdec} → <0x{sdec_to_hex}>, <0b{sdec_to_bin}>";
+            let srcHexFormat = "0x{hex} → <{hex_to_dec}>, <0b{hex_to_bin}>";
+            let srcBinFormat = "0b{bin} → <0x{bin_to_hex}>, <{bin_to_dec}>";
             let result = '';
             if (vars.srcDec !== undefined)
                 result += vars.formatString(srcDecFormat) + "\n\n";
@@ -134,12 +135,35 @@ export function activate(context: vscode.ExtensionContext) {
             if (result) {
                 // Display the hover
                 const mdText = new vscode.MarkdownString();
+                mdText.isTrusted = true; // Allow executing a command from a link in the markdown
                 mdText.appendMarkdown(result);
                 return new vscode.Hover(mdText);
             }
         }
     });
     context.subscriptions.push(hoverProvider);
+
+    // Register command to replace hovered value
+    const replaceCommand = vscode.commands.registerCommand('hexHover._replace', async (args) => {
+        const editor = vscode.window.activeTextEditor;
+        if (!editor) {
+            return; // No active editor
+        }
+        // Get arguments
+        const range = new vscode.Range(
+            args.range_start_line,
+            args.range_start_character,
+            args.range_end_line,
+            args.range_end_character
+        );
+        const uri = vscode.Uri.parse(args.uri);
+        const text = args.text;
+        // Create a WorkspaceEdit to replace the text
+        const edit = new vscode.WorkspaceEdit();
+        edit.replace(uri, range, text);
+        await vscode.workspace.applyEdit(edit);
+    });
+    context.subscriptions.push(replaceCommand);
 }
 
 
@@ -160,6 +184,15 @@ class Vars {
     convHexBin: BigInt | undefined;
     convBinDec: BigInt | undefined;
     convBinHex: BigInt | undefined;
+
+    doc: vscode.TextDocument;
+    range: vscode.Range;
+
+    // Constructor saves the document and range.
+    constructor(doc: vscode.TextDocument, public r: vscode.Range) {
+        this.doc = doc;
+        this.range = r;
+    }
 
     /** Format string.
      * Replaces the placeholders with the given values.
@@ -201,7 +234,16 @@ class Vars {
         });
         // Check for buttons
         result = result.replace(/<([^>]*)>/g, (_match, p1) => {
-            const replacement = `[${p1}](http://link)`;
+            const args = encodeURIComponent(JSON.stringify({
+                text: p1,
+                uri: this.doc.uri.toString(),
+                range_start_line: this.range.start.line,
+                range_start_character: this.range.start.character,
+                range_end_line: this.range.end.line,
+                range_end_character: this.range.end.character,
+            }));
+            const replacement = `[${p1}](command:hexHover._replace?${args})`;
+            console.log('replacement = ' + replacement); // For testing
             return replacement;
         });
 
