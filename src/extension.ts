@@ -124,11 +124,16 @@ export function activate(context: vscode.ExtensionContext) {
                 vars.convBinHex = value;
 
                 // Signed Decimal (nur wenn höchstes Bit gesetzt)
-                const bitLen = binString.length;
                 if (binString[0] === '1') {
-                    // höchstes Bit gesetzt
-                    const negValue = value - (2n ** BigInt(bitLen));
-                    vars.convBinSDec = negValue;
+                    // Höchstes Bit gesetzt.
+                    // Jetzt check ob Länge Zweierpotenz ist (8, 16, 32, 64, ...)
+                    const bitLen = binString.length;
+                    const isPowerOfTwo = (bitLen & (bitLen - 1)) === 0 && bitLen >= 8;
+                    if (isPowerOfTwo) {
+                        // Länge ist Zweierpotenz
+                        const negValue = value - (2n ** BigInt(bitLen));
+                        vars.convBinSDec = negValue;
+                    }
                 }
             }
 
@@ -219,41 +224,66 @@ class Vars {
      * other characters): {dec,hex,bin} or {dec,hex,bin: | }
      */
     public formatString(format: string): string {
-        // Replace variables in format string
+        // Replace special variable which represents positive decimal and signed decimal.
+        // If both are equal only one is printed.
         let result = format;
-        result = result.replace(/\{([^}]*)\}/g, (_match, p1) => {
+        result = result.replace(/<\{hex_to_2dec\}>/g, (_match) => {
+            const vals = this.get2DecString(this.convHexDec, this.convHexSDec);
+            return '<' + vals.join('>, <') + '>';
+        });
+        result = result.replace(/<\{bin_to_2dec\}>/g, (_match) => {
+            const vals = this.get2DecString(this.convBinDec, this.convBinSDec);
+            return '<' + vals.join('>, <') + '>';
+        });
 
+        // Replace variables in format string
+        result = result.replace(/\{([^}]*)\}/g, (_match, p1) => {
+            let convVal: string;
             // Source values
             if (this.srcDec !== undefined && p1 === 'dec')
-                return this.geDecString(this.srcDec);
-            if (this.srcSDec !== undefined && p1 === 'sdec')
-                return this.geDecString(this.srcSDec);
-            if (this.srcHex !== undefined && p1 === 'hex')
-                return this.getHexString(this.srcHex);
-            if (this.srcBin !== undefined && p1 === 'bin')
-                return this.getBinString(this.srcBin);
+                convVal = this.geDecString(this.srcDec);
+            else if (this.srcSDec !== undefined && p1 === 'sdec')
+                convVal = this.geDecString(this.srcSDec);
+            else if (this.srcHex !== undefined && p1 === 'hex')
+                convVal = this.getHexString(this.srcHex);
+            else if (this.srcBin !== undefined && p1 === 'bin')
+                convVal = this.getBinString(this.srcBin);
             // Converted values
-            if (p1 === 'dec_to_hex')
-                return this.getHexString(this.convDecHex);
-            if (p1 === 'dec_to_bin')
-                return this.getBinString(this.convDecBin);
-            if (p1 === 'sdec_to_hex')
-                return this.getHexString(this.convSDecHex);
-            if (p1 === 'sdec_to_bin')
-                return this.getBinString(this.convSDecBin);
-            if (p1 === 'hex_to_dec')
-                return this.geDecString(this.convHexDec);
-            if (p1 === 'hex_to_sdec')
-                return this.geDecString(this.convHexSDec);
-            if (p1 === 'hex_to_bin')
-                return this.getBinString(this.convHexBin);
-            if (p1 === 'bin_to_dec')
-                return this.geDecString(this.convBinDec);
-            if (p1 === 'bin_to_hex')
-                return this.getHexString(this.convBinHex);
-            if (p1 === 'bin_to_sdec')
-                return this.geDecString(this.convBinSDec);
-            return '{' + p1 + '}';
+            else if (p1 === 'dec_to_hex')
+                convVal = this.getHexString(this.convDecHex);
+            else if (p1 === 'dec_to_bin')
+                convVal = this.getBinString(this.convDecBin);
+            else if (p1 === 'sdec_to_hex')
+                convVal = this.getHexString(this.convSDecHex);
+            else if (p1 === 'sdec_to_bin')
+                convVal = this.getBinString(this.convSDecBin);
+            else if (p1 === 'hex_to_dec')
+                convVal = this.geDecString(this.convHexDec);
+            else if (p1 === 'hex_to_sdec')
+                convVal = this.geDecString(this.convHexSDec);
+            else if (p1 === 'hex_to_bin')
+                convVal = this.getBinString(this.convHexBin);
+            else if (p1 === 'bin_to_dec')
+                convVal = this.geDecString(this.convBinDec);
+            else if (p1 === 'bin_to_hex')
+                convVal = this.getHexString(this.convBinHex);
+            else if (p1 === 'bin_to_sdec')
+                convVal = this.geDecString(this.convBinSDec);
+            // Multiple values
+            else if (p1 === 'hex_to_2dec') {
+                const vals = this.get2DecString(this.convHexDec, this.convHexSDec);
+                // Not equal, return both
+                convVal = vals.join(', ');
+            }
+            else if (p1 === 'bin_to_2dec') {
+                const vals = this.get2DecString(this.convBinDec, this.convBinSDec);
+                // Not equal, return both
+                convVal = vals.join(', ');
+            }
+            // Nothing found
+            else
+                convVal = '{' + p1 + '}';
+            return convVal;
         });
         // Check for buttons
         result = result.replace(/<([^>]*)>/g, (_match, p1) => {
@@ -280,6 +310,20 @@ class Vars {
             return 'NA'
         const decString = value.toString();
         return decString;
+    }
+
+    /** Returns one or two decimal strings.
+     * If dec and sDec are equal, only one string is returned.
+     * Otherwise both are returned in an array.
+     */
+    private get2DecString(dec: BigInt | undefined, sDec: BigInt | undefined): string[] {
+        if (dec === undefined)
+            return ['NA']
+        const decString = this.geDecString(dec);
+        if (sDec === undefined || dec === sDec)
+            return [decString];
+        const sDecString = this.geDecString(sDec);
+        return [decString, sDecString];
     }
 
     /** Returns a hex string representation of the given bigint.

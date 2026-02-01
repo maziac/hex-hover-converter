@@ -46,14 +46,14 @@
                 },
                 "hexHoverConverter.formatString.Hexadecimal": {
                     "type": "string",
-                    "default": "0x{hex} → <{hex_to_dec}>, <0b{hex_to_bin}>",
-                    "description": "Format string for hexadecimal source value.\nAny text inside <...> brackets will be replaced with the corresponding value.\nUse the following variables: {hex} for the hovered decimal value, {hex_to_dec} for the converted hexadecimal value, and {hex_to_bin} for the converted binary value.\nClear this string to omit the conversion.",
+                    "default": "0x{hex} → <{hex_to_2dec}>, <0b{hex_to_bin}>",
+                    "description": "Format string for hexadecimal source value.\nAny text inside <...> brackets will be replaced with the corresponding value.\nUse the following variables: {hex} for the hovered decimal value, {hex_to_dec} for the converted hexadecimal value, and {hex_to_bin} for the converted binary value.\n{hex_to_2dec} is a special value that shows both positive and negative conversion if both differ.\nClear this string to omit the conversion.",
                     "order": 12
                 },
                 "hexHoverConverter.formatString.Binary": {
                     "type": "string",
-                    "default": "0b{bin} → <0x{bin_to_hex}>, <{bin_to_dec}>",
-                    "description": "Format string for binary source value.\nAny text inside <...> brackets will be replaced with the corresponding value.\nUse the following variables: {bin} for the hovered binary value, {bin_to_hex} for the converted hexadecimal value, and {bin_to_dec} for the converted decimal value.\nClear this string to omit the conversion.",
+                    "default": "0b{bin} → <0x{bin_to_hex}>, <{bin_to_2dec}>",
+                    "description": "Format string for binary source value.\nAny text inside <...> brackets will be replaced with the corresponding value.\nUse the following variables: {bin} for the hovered binary value, {bin_to_hex} for the converted hexadecimal value, and {bin_to_dec} for the converted decimal value.\n{bin_to_2dec} is a special value that shows both positive and negative conversion if both differ.\nClear this string to omit the conversion.",
                     "order": 13
                 },
                 "hexHoverConverter.hexRecognition.strict": {
