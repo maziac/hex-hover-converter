@@ -168,20 +168,36 @@ export function activate(context: vscode.ExtensionContext) {
     context.subscriptions.push(hoverProvider);
 
     // Register command to replace hovered value
+    let prevMsgCounter = 0;
+    let lastLength = 0;
     const replaceCommand = vscode.commands.registerCommand('hexHover._replace', async (args) => {
         const editor = vscode.window.activeTextEditor;
         if (!editor) {
             return; // No active editor
         }
         // Get arguments
-        const range = new vscode.Range(
-            args.range_start_line,
-            args.range_start_character,
-            args.range_end_line,
-            args.range_end_character
-        );
         const uri = vscode.Uri.parse(args.uri);
         const text = args.text;
+        let range: vscode.Range;
+        if (args.counter === prevMsgCounter) {
+            // Same as last time, use last length
+            range = new vscode.Range(
+                args.range_start_line,
+                args.range_start_character,
+                args.range_start_line,
+                args.range_start_character + lastLength
+            );
+        } else {
+            // New value
+            prevMsgCounter = args.counter;
+            range = new vscode.Range(
+                args.range_start_line,
+                args.range_start_character,
+                args.range_end_line,
+                args.range_end_character
+            );
+        }
+        lastLength = text.length;
         // Create a WorkspaceEdit to replace the text
         const edit = new vscode.WorkspaceEdit();
         edit.replace(uri, range, text);
@@ -194,6 +210,7 @@ export function activate(context: vscode.ExtensionContext) {
 
 /** Struct to hold variables, source and converted values. */
 class Vars {
+    protected static msgCounter = 0;
     srcDec: BigInt | undefined;
     srcSDec: BigInt | undefined;
     srcHex: BigInt | undefined;
@@ -217,6 +234,7 @@ class Vars {
     constructor(doc: vscode.TextDocument, public r: vscode.Range) {
         this.doc = doc;
         this.range = r;
+        Vars.msgCounter++;
     }
 
     // Fix range start by offset (e.g. to include $ for hex numbers)
@@ -300,6 +318,7 @@ class Vars {
         // Check for buttons
         result = result.replace(/<([^>]*)>/g, (_match, p1) => {
             const args = encodeURIComponent(JSON.stringify({
+                counter: Vars.msgCounter,
                 text: p1,
                 uri: this.doc.uri.toString(),
                 range_start_line: this.range.start.line,
