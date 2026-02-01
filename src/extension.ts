@@ -73,8 +73,10 @@ export function activate(context: vscode.ExtensionContext) {
                 if (!match)
                     match = /^([0-9a-fA-F_]+)h$/g.exec(hoveredWord);    // E.g. 07E2h
                 if (!match) {
-                    if (line.endsWith('$'))
+                    if (line.endsWith('$')) {
                         match = /^([0-9a-fA-F_]+)$/g.exec(hoveredWord);    // E.g. $07E2
+                        vars.fixRangeStart(-1); // Extend range to include $
+                    }
                 }
                 if (!match) {
                     const strictHex = config.get<boolean>('hexRecognition.strict', false);
@@ -215,6 +217,16 @@ class Vars {
     constructor(doc: vscode.TextDocument, public r: vscode.Range) {
         this.doc = doc;
         this.range = r;
+    }
+
+    // Fix range start by offset (e.g. to include $ for hex numbers)
+    public fixRangeStart(offset: number) {
+        this.range = new vscode.Range(
+            this.range.start.line,
+            this.range.start.character + offset,
+            this.range.end.line,
+            this.range.end.character
+        );
     }
 
     /** Format string.
