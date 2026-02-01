@@ -122,6 +122,14 @@ export function activate(context: vscode.ExtensionContext) {
                 vars.srcBin = value;
                 vars.convBinDec = value;
                 vars.convBinHex = value;
+
+                // Signed Decimal (nur wenn höchstes Bit gesetzt)
+                const bitLen = binString.length;
+                if (binString[0] === '1') {
+                    // höchstes Bit gesetzt
+                    const negValue = value - (2n ** BigInt(bitLen));
+                    vars.convBinSDec = negValue;
+                }
             }
 
             // Replace in format string
@@ -193,6 +201,7 @@ class Vars {
     convHexBin: BigInt | undefined;
     convBinDec: BigInt | undefined;
     convBinHex: BigInt | undefined;
+    convBinSDec: BigInt | undefined;
 
     doc: vscode.TextDocument;
     range: vscode.Range;
@@ -206,39 +215,44 @@ class Vars {
     /** Format string.
      * Replaces the placeholders with the given values.
      * E.g. {dec}, {hex}, {dec_to_hex}, {hex_to_dec}, ...
+     * It also allows for multiple variables separated by commas (or
+     * other characters): {dec,hex,bin} or {dec,hex,bin: | }
      */
     public formatString(format: string): string {
         // Replace variables in format string
         let result = format;
         result = result.replace(/\{([^}]*)\}/g, (_match, p1) => {
+
             // Source values
             if (this.srcDec !== undefined && p1 === 'dec')
-                return this.srcDec.toString();
+                return this.geDecString(this.srcDec);
             if (this.srcSDec !== undefined && p1 === 'sdec')
-                return this.srcSDec.toString();
+                return this.geDecString(this.srcSDec);
             if (this.srcHex !== undefined && p1 === 'hex')
                 return this.getHexString(this.srcHex);
             if (this.srcBin !== undefined && p1 === 'bin')
                 return this.getBinString(this.srcBin);
             // Converted values
-            if (this.convDecHex !== undefined && p1 === 'dec_to_hex')
+            if (p1 === 'dec_to_hex')
                 return this.getHexString(this.convDecHex);
-            if (this.convDecBin !== undefined && p1 === 'dec_to_bin')
+            if (p1 === 'dec_to_bin')
                 return this.getBinString(this.convDecBin);
-            if (this.convSDecHex !== undefined && p1 === 'sdec_to_hex')
+            if (p1 === 'sdec_to_hex')
                 return this.getHexString(this.convSDecHex);
-            if (this.convSDecBin !== undefined && p1 === 'sdec_to_bin')
+            if (p1 === 'sdec_to_bin')
                 return this.getBinString(this.convSDecBin);
-            if (this.convHexDec !== undefined && p1 === 'hex_to_dec')
-                return this.convHexDec.toString();
-            if (this.convHexSDec !== undefined && p1 === 'hex_to_sdec')
-                return this.convHexSDec.toString();
-            if (this.convHexBin !== undefined && p1 === 'hex_to_bin')
+            if (p1 === 'hex_to_dec')
+                return this.geDecString(this.convHexDec);
+            if (p1 === 'hex_to_sdec')
+                return this.geDecString(this.convHexSDec);
+            if (p1 === 'hex_to_bin')
                 return this.getBinString(this.convHexBin);
-            if (this.convBinDec !== undefined && p1 === 'bin_to_dec')
-                return this.convBinDec.toString();
-            if (this.convBinHex !== undefined && p1 === 'bin_to_hex')
+            if (p1 === 'bin_to_dec')
+                return this.geDecString(this.convBinDec);
+            if (p1 === 'bin_to_hex')
                 return this.getHexString(this.convBinHex);
+            if (p1 === 'bin_to_sdec')
+                return this.geDecString(this.convBinSDec);
             return '{' + p1 + '}';
         });
         // Check for buttons
@@ -258,10 +272,22 @@ class Vars {
         return result;
     }
 
+    /** Returns a decimal string representation of the given bigint.
+     * Signed
+     */
+    private geDecString(value: BigInt | undefined): string {
+        if (value === undefined)
+            return 'NA'
+        const decString = value.toString();
+        return decString;
+    }
+
     /** Returns a hex string representation of the given bigint.
      * Pads with zeroes.
-    */
-    private getHexString(value: BigInt): string {
+     */
+    private getHexString(value: BigInt | undefined): string {
+        if (value === undefined)
+            return 'NA'
         let hexString = value.toString(16).toUpperCase();
         // Pad hex string to at least 2, 4, 8, 16, ... digits (1, 2, 4, 8 bytes)
         // Find minimal power of two bytes that fits the value
@@ -271,7 +297,9 @@ class Vars {
     }
 
     /** Returns a binary string representation of the given bigint, formatted with hyphens every 8 bits. */
-    private getBinString(value: BigInt): string {
+    private getBinString(value: BigInt | undefined): string {
+        if (value === undefined)
+            return 'NA'
         let binString = value.toString(2);
         const binLen = 8 * (Math.floor((binString.length - 1) / 8) + 1);
         binString = binString.padStart(binLen, '0');
