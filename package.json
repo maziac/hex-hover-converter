@@ -56,10 +56,17 @@
                     "description": "Format string for binary source value.\nAny text inside <...> brackets is clickable and will replace the hovered text with the corresponding value.\nUse the following variables: {bin} for the hovered binary value, {decu} for the converted positive decimal value, {deci} for the converted negative value (if existing) and {hex} for the converted hexadecimal value.\n{dec} is a special value that shows both positive and negative conversion values (if existing).\nClear this string to omit the conversion.",
                     "order": 13
                 },
-                "hexHoverConverter.hexRecognition.strict": {
+                "hexHoverConverter.strict.hexRecognition": {
                     "type": "boolean",
                     "default": true,
-                    "description": "Recognize hexadecimal numbers only if they have a prefix (e.g., 0x or $) or suffix (e.g., h)."
+                    "description": "Recognize hexadecimal numbers only if they have a prefix (e.g. 0x or $) or suffix (e.g. h).",
+                    "order": 20
+                },
+                "hexHoverConverter.strict.binRecognition": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Recognize binary numbers only if they have a prefix (e.g. b or 0b) or suffix (e.g. b).",
+                    "order": 21
                 }
             }
         }

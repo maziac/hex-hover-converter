@@ -79,7 +79,7 @@ export function activate(context: vscode.ExtensionContext) {
                     }
                 }
                 if (!match) {
-                    const strictHex = config.get<boolean>('hexRecognition.strict', false);
+                    const strictHex = config.get<boolean>('strict.hexRecognition', false);
                     if (!strictHex)
                         match = /^([0-9a-f_]+)$/gi.exec(hoveredWord);    // E.g. F08A
                 }
@@ -116,6 +116,11 @@ export function activate(context: vscode.ExtensionContext) {
                 match = /^([01]+)b$/g.exec(hoveredWord);    // E.g. 10010b
                 if (!match)
                     match = /^0b([01]+)$/g.exec(hoveredWord);    // E.g. 0b01011
+                if (!match) {
+                    const strictBin = config.get<boolean>('strict.binRecognition', false);
+                    if (!strictBin)
+                        match = /^([[01]+)$/gi.exec(hoveredWord);    // E.g. 01011
+                }
             }
             if (match) {
                 // Binary
