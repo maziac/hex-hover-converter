@@ -1,7 +1,7 @@
 # Support
-If you like the "Hex Hover Converter" please consider supporting it.
+If you like the "Hex Hover Converter," please consider supporting it.
 
-<a href="https://github.com/sponsors/maziac" title="Github sponsor">
+<a href="https://github.com/sponsors/maziac" title="GitHub Sponsor">
 	<img src="assets/button_donate_sp.png" />
 </a>
 &nbsp;&nbsp;
@@ -13,28 +13,50 @@ If you like the "Hex Hover Converter" please consider supporting it.
 # Hex Hover Converter
 ![](assets/hex-hover-converter.gif)
 
-The "Hex Hover Converter" converts numbers into their decimal, hexadecimal and binary format.
-You simply have to hover over the number with your mouse.
-Conversion takes place in all directions. I.e. decimal is converted to hexadecimal and binary. Hexadecimal is converted to decimal and binary, etc.
+The "Hex Hover Converter" displays numbers in their decimal, hexadecimal, and binary formats.
+Simply hover your mouse over a number to see the conversion.
+Conversions work in all directions: decimal to hexadecimal and binary, hexadecimal to decimal and binary, and so on.
+
+Version 2.0 introduces a more compact display and full customization of the output.
+Additionally, the content is now clickable, allowing you to easily replace the hovered number with the converted value.
 
 # Customizations
-You can customize the appearance of the hovers globally ("User") and per workspace.
-For each type of conversion (decimal to hex/binary, hex to decimal/binary or binary to decimal/hex) you can define a different format string.
-If you don't want a conversion to appear (e.g. if you don't want the line with the binary conversions) you simply clear the line.
+You can customize the appearance of the hovers globally ("User") or per workspace.
+For each type of conversion (decimal to hex/binary, hex to decimal/binary, or binary to decimal/hex), you can define a different format string.
+If you don't want a particular conversion to appear (e.g., you don't want the binary conversion line), simply clear the line.
+
+For example, the default format string for hexadecimal conversion is:
+~~~
+0x{hex} → <{dec}>, <0b{bin}>\n
+~~~
+
+The **curly brackets** {...} contain variables representing the hovered value as:
+- `{hex}`: hexadecimal value
+- `{dec}`: decimal value
+- `{bin}`: binary value
+
+When hovering, the above line could expand to:
+![](assets/remote/hover_hex.jpg)
+
+Please note that `{dec}` is special, as it can represent both positive and negative values at the same time.
+When converting hex values, it is not always clear whether the result should be positive or negative. In such cases, both values are shown.
+Here is an example:
+![](assets/remote/hover_hex_with_neg_dec.jpg)
+
+Additionally, two more variables exist:
+- `{decu}`: unsigned decimal value (always positive)
+- `{deci}`: decimal value (may be negative or positive)
+
+The **angle brackets** <...> are used to make the enclosed text clickable. If you click the text, it will replace the hovered value, making it easy to swap the value with its converted form.
+![](assets/remote/hover_replace.gif)
 
 
-
-
-# Hovers in Debug Mode
-vscode turns the normal hovers off if in debug mode. To make them visible press the "ALT" key while hovering.
+# Caveats
+- Hovers in Debug Mode: VS Code disables normal hovers in debug mode. To make them visible, press the "ALT" key while hovering.
 
 # License and Acknowledgements
-This extension is based on the https://github.com/thegtproject/vscode-hoverhex by [Brandon/thegtproject](https://github.com/thegtproject) and originally was a pull request.
-But the original project seems to be abandoned.
-As it is MIT licensed I decided to use the extension skeleton from the original project and enhance the simple hex conversion into a more enhanced decimal-hex-binary conversion in all directions.
+This extension is based on https://github.com/thegtproject/vscode-hoverhex by [Brandon/thegtproject](https://github.com/thegtproject) and was originally a pull request.
+However, the original project appears to be abandoned.
+As it is MIT licensed, I decided to use the extension skeleton from the original project and enhance the simple hex conversion into a more advanced decimal-hex-binary conversion in all directions.
 
-This extension here is also MIT licensed.
-
-
-
-
+This extension is also MIT licensed.
