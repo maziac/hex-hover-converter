@@ -50,7 +50,6 @@ Additionally, two more variables exist:
 The **angle brackets** <...> are used to make the enclosed text clickable. If you click the text, it will replace the hovered value, making it easy to swap the value with its converted form.
 ![](assets/remote/hover_replace.gif)
 
-
 # Caveats
 - Hovers in Debug Mode: VS Code disables normal hovers in debug mode. To make them visible, press the "ALT" key while hovering.
 
