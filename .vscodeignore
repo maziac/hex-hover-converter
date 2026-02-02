@@ -6,3 +6,4 @@ src/**
 tsconfig.json
 notes.md
 *.vsix
+assets/remote/**

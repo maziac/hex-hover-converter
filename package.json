@@ -22,7 +22,7 @@
     "categories": [
         "Other"
     ],
-    "icon": "assets/icon.png",
+    "icon": "assets/local/icon.png",
     "activationEvents": [
         "onStartupFinished"
     ],
