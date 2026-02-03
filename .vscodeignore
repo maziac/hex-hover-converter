@@ -7,3 +7,4 @@ tsconfig.json
 notes.md
 *.vsix
 assets/remote/**
+assets/local/*.xcf
