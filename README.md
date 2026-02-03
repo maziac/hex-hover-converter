@@ -67,7 +67,8 @@ formatString.signedDecimal = "<0x{hex}>, <0b{bin}>"
 ~~~
 ![](assets/remote/hover_compact_one_line.jpg)
 
-# Caveats
+# Remarks
+- Conversion of negative values: Negative numbers are converted using two's complement. Values are sign-extended to the next byte, word, or dword boundary before conversion. For example, "-6" becomes "0xFA" in hexadecimal, and "-32766" becomes "0x8002", and vice versa.
 - Hovers in Debug Mode: VS Code disables normal hovers in debug mode. To make them visible, press the "ALT" key while hovering.
 
 # License and Acknowledgements
