@@ -1,4 +1,3 @@
-import {sep} from 'path';
 import * as vscode from 'vscode';
 
 

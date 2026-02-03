@@ -55,8 +55,8 @@ export function activate(context: vscode.ExtensionContext) {
                 const negMatch = /-\s*$/.exec(line);
                 if (negMatch) {
                     // Round to next power of 2 (i.e. 16-bit, 32-bit, 64-bit, ...)
-                    const len = 2 ** Math.ceil(Math.log2(value.toString(16).length));
-                    const negValue = 2n ** (4n * BigInt(len)) - value;
+                    const len = 2 ** Math.ceil(Math.log2(Math.ceil(value.toString(16).length / 2)));
+                    const negValue = 2n ** (8n * BigInt(len)) - value;
                     vars.srcSDec = BigInt(-vars.srcDec);
                     vars.convSDecHex = negValue;
                     vars.convSDecBin = negValue;

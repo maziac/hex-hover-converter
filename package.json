@@ -59,7 +59,7 @@
                 "hexHoverConverter.formatString.stringSeparator": {
                     "type": "string",
                     "default": "\\n",
-                    "description": "Specifies the separator used to join the format strings. Typically '\\n' places each conversion on a separate line, while ', ' displays all conversions on a single line.",
+                    "description": "Specifies the separator used to join the format strings. Typically '\\n' places each conversion string on a separate line, while ', ' displays all conversion strings on a single line.",
                     "order": 20
                 },
                 "hexHoverConverter.strict.hexRecognition": {
