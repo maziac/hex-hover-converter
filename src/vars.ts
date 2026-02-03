@@ -1,3 +1,4 @@
+import {sep} from 'path';
 import * as vscode from 'vscode';
 
 
@@ -64,7 +65,10 @@ export class Vars {
 			lines.push(this.formatString(srcBinFormat, this.convBinDec, this.convBinSDec, this.convBinHex, this.srcBin));
 		}
 		// Get separator and join lines
-		const separator = config.get<string>('formatString.OutputLineSeparator', '\n');
+		let separator = config.get<string>('formatString.stringSeparator', '\n');
+		separator = separator.replace(/\\n/g, '\n');
+		if (separator === '\n')
+			separator += '\n';	// For a line break a double \n is required
 		let result = lines.join(separator);
 		return result;
 	}

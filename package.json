@@ -34,39 +34,45 @@
             "properties": {
                 "hexHoverConverter.formatString.decimal": {
                     "type": "string",
-                    "default": "{decu} → <0x{hex}>, <0b{bin}>\\n",
-                    "description": "Format string for decimal source values.\nAny text inside <...> brackets is clickable and will replace the hovered text with the corresponding value.\nUse the following variables: {decu} for the hovered decimal positive value, {hex} for the converted hexadecimal value, and {bin} for the converted binary value.\nClear this string to omit the conversion.",
+                    "default": "{decu} → <0x{hex}>, <0b{bin}>",
+                    "description": "Format string for decimal values.\nAny text inside <...> brackets is clickable and will replace the hovered text with the corresponding value.\nYou can use the following variables: {decu} for the hovered positive decimal value, {hex} for the converted hexadecimal value, and {bin} for the converted binary value.\nClear this string to omit the conversion.",
                     "order": 10
                 },
                 "hexHoverConverter.formatString.signedDecimal": {
                     "type": "string",
-                    "default": "{deci} → <0x{hex}>, <0b{bin}>\\n",
-                    "description": "Format string for signed decimal source values.\nThis will be used only if the decimal value is prepended by a minus sign.\nAny text inside <...> brackets is clickable and will replace the hovered text with the corresponding value.\nUse the following variables: {deci} for the hovered signed decimal value, {hex} for the converted hexadecimal value, and {bin} for the converted binary value.\nClear this string to omit the conversion.",
+                    "default": "{deci} → <0x{hex}>, <0b{bin}>",
+                    "description": "Format string for signed decimal values.\nThis is used only when the decimal value has a leading minus sign.\nAny text inside <...> brackets is clickable and will replace the hovered text with the corresponding value.\nYou can use the following variables: {deci} for the hovered signed decimal value, {hex} for the converted hexadecimal value, and {bin} for the converted binary value.\nClear this string to omit the conversion.",
                     "order": 11
                 },
                 "hexHoverConverter.formatString.hexadecimal": {
                     "type": "string",
-                    "default": "0x{hex} → <{dec}>, <0b{bin}>\\n",
-                    "description": "Format string for hexadecimal source value.\nAny text inside <...> brackets is clickable and will replace the hovered text with the corresponding value.\nUse the following variables: {hex} for the hovered hex value, {decu} for the converted positive decimal value, {deci} for the converted negative value (if existing) and {bin} for the converted binary value.\n{dec} is a special value that shows both positive and negative conversion values (if existing).\nClear this string to omit the conversion.",
+                    "default": "0x{hex} → <{dec}>, <0b{bin}>",
+                    "description": "Format string for hexadecimal values.\nAny text inside <...> brackets is clickable and will replace the hovered text with the corresponding value.\nYou can use the following variables: {hex} for the hovered binary value, {decu} for the converted positive decimal value, {deci} for the converted negative decimal value (if present), and {hex} for the converted hexadecimal value.\n{dec} is a special variable that displays both positive and negative decimal conversions (if present).\nClear this string to omit the conversion.",
                     "order": 12
                 },
                 "hexHoverConverter.formatString.binary": {
                     "type": "string",
-                    "default": "0b{bin} → <{dec}>, <0x{hex}>\\n",
-                    "description": "Format string for binary source value.\nAny text inside <...> brackets is clickable and will replace the hovered text with the corresponding value.\nUse the following variables: {bin} for the hovered binary value, {decu} for the converted positive decimal value, {deci} for the converted negative value (if existing) and {hex} for the converted hexadecimal value.\n{dec} is a special value that shows both positive and negative conversion values (if existing).\nClear this string to omit the conversion.",
+                    "default": "0b{bin} → <{dec}>, <0x{hex}>",
+                    "description": "Format string for binary values.\nAny text inside <...> brackets is clickable and will replace the hovered text with the corresponding value.\nYou can use the following variables: {bin} for the hovered binary value, {decu} for the converted positive decimal value, {deci} for the converted negative decimal value (if present), and {hex} for the converted hexadecimal value.\n{dec} is a special variable that displays both positive and negative decimal conversions (if present).\nClear this string to omit the conversion.",
                     "order": 13
+                },
+                "hexHoverConverter.formatString.stringSeparator": {
+                    "type": "string",
+                    "default": "\\n",
+                    "description": "Specifies the separator used to join the format strings. Typically '\\n' places each conversion on a separate line, while ', ' displays all conversions on a single line.",
+                    "order": 20
                 },
                 "hexHoverConverter.strict.hexRecognition": {
                     "type": "boolean",
                     "default": true,
                     "description": "Recognize hexadecimal numbers only if they have a prefix (e.g. 0x or $) or suffix (e.g. h).",
-                    "order": 20
+                    "order": 30
                 },
                 "hexHoverConverter.strict.binRecognition": {
                     "type": "boolean",
                     "default": true,
                     "description": "Recognize binary numbers only if they have a prefix (e.g. b or 0b) or suffix (e.g. b).",
-                    "order": 21
+                    "order": 31
                 }
             }
         }
