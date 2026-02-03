@@ -46,23 +46,26 @@ export class Vars {
 	/** Create the string from the variables and teh format strings. */
 	public toString(config: vscode.WorkspaceConfiguration): string {
 		// Replace in format string
-		let result = '';
+		const lines: string[] = [];
 		if (this.srcDec) {
-			const srcDecFormat = config.get<string>('formatString.Decimal', "").trim();
-			result += this.formatString(srcDecFormat, this.srcDec, this.srcSDec, this.convDecHex, this.convDecBin) + "\n";
+			const srcDecFormat = config.get<string>('formatString.decimal', "").trim();
+			lines.push(this.formatString(srcDecFormat, this.srcDec, this.srcSDec, this.convDecHex, this.convDecBin));
 		}
 		if (this.srcSDec) {
-			const srcSDecFormat = config.get<string>('formatString.SignedDecimal', "").trim();
-			result += this.formatString(srcSDecFormat, this.srcDec, this.srcSDec, this.convSDecHex, this.convSDecBin) + "\n";
+			const srcSDecFormat = config.get<string>('formatString.signedDecimal', "").trim();
+			lines.push(this.formatString(srcSDecFormat, this.srcDec, this.srcSDec, this.convSDecHex, this.convSDecBin));
 		}
 		if (this.srcHex) {
-			const srcHexFormat = config.get<string>('formatString.Hexadecimal', "").trim();
-			result += this.formatString(srcHexFormat, this.convHexDec, this.convHexSDec, this.srcHex, this.convHexBin) + "\n";
+			const srcHexFormat = config.get<string>('formatString.hexadecimal', "").trim();
+			lines.push(this.formatString(srcHexFormat, this.convHexDec, this.convHexSDec, this.srcHex, this.convHexBin));
 		}
 		if (this.srcBin) {
-			const srcBinFormat = config.get<string>('formatString.Binary', "").trim();
-			result += this.formatString(srcBinFormat, this.convBinDec, this.convBinSDec, this.convBinHex, this.srcBin) + "\n";
+			const srcBinFormat = config.get<string>('formatString.binary', "").trim();
+			lines.push(this.formatString(srcBinFormat, this.convBinDec, this.convBinSDec, this.convBinHex, this.srcBin));
 		}
+		// Get separator and join lines
+		const separator = config.get<string>('formatString.OutputLineSeparator', '\n');
+		let result = lines.join(separator);
 		return result;
 	}
 
