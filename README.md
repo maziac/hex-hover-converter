@@ -50,6 +50,23 @@ Additionally, two more variables exist:
 The **angle brackets** <...> are used to make the enclosed text clickable. If you click the text, it will replace the hovered value, making it easy to swap the value with its converted form.
 ![](assets/remote/hover_replace.gif)
 
+## More Examples
+There is a setting for the character to use for joining the different conversion strings: `format.stringSeparator`.
+Typically this is set to the newline character `\n` to have each conversion on a separate line.
+But if you like you can change it e.g. to a `, ` to have all conversion in one line.
+If you'd do so, you'd for example get:
+![](assets/remote/hover_one_line.jpg)
+
+Instead of:
+![](assets/remote/hover_two_lines.jpg)
+
+You could for example get an even more compact line if you omit the source values in the format strings:
+~~~json
+formatString.decimal = "<0x{hex}>, <0b{bin}>"
+formatString.signedDecimal = "<0x{hex}>, <0b{bin}>"
+~~~
+![](assets/remote/hover_compact_one_line.jpg)
+
 # Caveats
 - Hovers in Debug Mode: VS Code disables normal hovers in debug mode. To make them visible, press the "ALT" key while hovering.
 
