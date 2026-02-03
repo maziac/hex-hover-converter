@@ -51,16 +51,16 @@ The **angle brackets** <...> are used to make the enclosed text clickable. If yo
 ![](assets/remote/hover_replace.gif)
 
 ## More Examples
-There is a setting for the character to use for joining the different conversion strings: `format.stringSeparator`.
-Typically this is set to the newline character `\n` to have each conversion on a separate line.
-But if you like you can change it e.g. to a `, ` to have all conversion in one line.
-If you'd do so, you'd for example get:
+You can customize the character used to separate different conversion strings with the `format.stringSeparator` setting.
+By default, this is set to the newline character `\n`, which displays each conversion on a separate line.
+However, you can change it to something like `, ` to show all conversions in a single line.
+For example:
 ![](assets/remote/hover_one_line.jpg)
 
 Instead of:
 ![](assets/remote/hover_two_lines.jpg)
 
-You could for example get an even more compact line if you omit the source values in the format strings:
+For an even more compact display, you can e.g. remove the source values completely from the format strings:
 ~~~json
 formatString.decimal = "<0x{hex}>, <0b{bin}>"
 formatString.signedDecimal = "<0x{hex}>, <0b{bin}>"
