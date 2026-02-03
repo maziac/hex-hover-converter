@@ -172,25 +172,19 @@ export function activate(context: vscode.ExtensionContext) {
         const uri = vscode.Uri.parse(args.uri);
         const text = args.text;
         let range: vscode.Range;
-        if (args.counter === prevMsgCounter) {
-            // Same as last time, use last length
-            range = new vscode.Range(
-                args.range_start_line,
-                args.range_start_character,
-                args.range_start_line,
-                args.range_start_character + lastLength
-            );
-        } else {
-            // New value
-            prevMsgCounter = args.counter;
-            range = new vscode.Range(
-                args.range_start_line,
-                args.range_start_character,
-                args.range_end_line,
-                args.range_end_character
-            );
+        if (args.counter !== prevMsgCounter) {
+            // Forget last length if new command
+            lastLength = args.range_end_character - args.range_start_character;
         }
+        range = new vscode.Range(
+            args.range_start_line,
+            args.range_start_character,
+            args.range_start_line,
+            args.range_start_character + lastLength
+        );
         lastLength = text.length;
+        prevMsgCounter = args.counter;
+
         // Create a WorkspaceEdit to replace the text
         const edit = new vscode.WorkspaceEdit();
         edit.replace(uri, range, text);
