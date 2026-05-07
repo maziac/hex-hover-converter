@@ -1,5 +1,8 @@
 # Changelog
 
+# 2.1.0
+- #13: Customizable digit grouping
+
 # 2.0.0
 - Allowed for customizing the hovers.
 

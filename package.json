@@ -2,7 +2,7 @@
     "name": "hex-hover-converter",
     "displayName": "Hex Hover Converter",
     "description": "Converts decimal, hexadecimal, and binary numbers when you hover over them.",
-    "version": "2.0.0",
+    "version": "2.1.0-rc1",
     "publisher": "maziac",
     "license": "MIT",
     "keywords": [
@@ -73,6 +73,42 @@
                     "default": true,
                     "description": "Recognize binary numbers only if they have a prefix (e.g. b or 0b) or suffix (e.g. b).",
                     "order": 31
+                },
+                "hexHoverConverter.digitGrouping.decimalGroupSize": {
+                    "type": "number",
+                    "default": 3,
+                    "description": "Specifies the number of digits in each group for decimal numbers. E.g. '1000000' can be displayed as '1,000,000' with a group size of 3.",
+                    "order": 50
+                },
+                "hexHoverConverter.digitGrouping.decimalGroupSeparator": {
+                    "type": "string",
+                    "default": ",",
+                    "description": "Specifies the separator used to group digits in decimal numbers. E.g. '1000000' can be displayed as '1,000,000'.",
+                    "order": 51
+                },
+                "hexHoverConverter.digitGrouping.hexGroupSize": {
+                    "type": "number",
+                    "default": 4,
+                    "description": "Specifies the number of digits in each group for hexadecimal numbers. E.g. '1A2BCD4F' can be displayed as '1A2B_CD4F' with a group size of 4.",
+                    "order": 55
+                },
+                "hexHoverConverter.digitGrouping.hexGroupSeparator": {
+                    "type": "string",
+                    "default": "_",
+                    "description": "Specifies the separator used to group digits in hexadecimal numbers. E.g. '1A2BCD4F' can be displayed as '1A2B_CD4F'.",
+                    "order": 56
+                },
+                "hexHoverConverter.digitGrouping.binaryGroupSize": {
+                    "type": "number",
+                    "default": 8,
+                    "description": "Specifies the number of digits in each group for binary numbers. E.g. '11010101' can be displayed as '1101_0101' with a group size of 4.",
+                    "order": 60
+                },
+                "hexHoverConverter.digitGrouping.binaryGroupSeparator": {
+                    "type": "string",
+                    "default": "_",
+                    "description": "Specifies the separator used to group digits in binary numbers. E.g. '11010101' can be displayed as '1101_0101'.",
+                    "order": 61
                 }
             }
         }
