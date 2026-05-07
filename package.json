@@ -33,78 +33,91 @@
             "title": "Hex Hover Converter",
             "properties": {
                 "hexHoverConverter.formatString.decimal": {
+                    "scope": "resource",
                     "type": "string",
                     "default": "{decu} → <0x{hex}>, <0b{bin}>",
                     "description": "Format string for decimal values.\nAny text inside <...> brackets is clickable and will replace the hovered text with the corresponding value.\nYou can use the following variables: {decu} for the hovered positive decimal value, {hex} for the converted hexadecimal value, and {bin} for the converted binary value.\nClear this string to omit the conversion.",
                     "order": 10
                 },
                 "hexHoverConverter.formatString.signedDecimal": {
+                    "scope": "resource",
                     "type": "string",
                     "default": "{deci} → <0x{hex}>, <0b{bin}>",
                     "description": "Format string for signed decimal values.\nThis is used only when the decimal value has a leading minus sign.\nAny text inside <...> brackets is clickable and will replace the hovered text with the corresponding value.\nYou can use the following variables: {deci} for the hovered signed decimal value, {hex} for the converted hexadecimal value, and {bin} for the converted binary value.\nClear this string to omit the conversion.",
                     "order": 11
                 },
                 "hexHoverConverter.formatString.hexadecimal": {
+                    "scope": "resource",
                     "type": "string",
                     "default": "0x{hex} → <{dec}>, <0b{bin}>",
                     "description": "Format string for hexadecimal values.\nAny text inside <...> brackets is clickable and will replace the hovered text with the corresponding value.\nYou can use the following variables: {hex} for the hovered binary value, {decu} for the converted positive decimal value, {deci} for the converted negative decimal value (if present), and {hex} for the converted hexadecimal value.\n{dec} is a special variable that displays both positive and negative decimal conversions (if present).\nClear this string to omit the conversion.",
                     "order": 12
                 },
                 "hexHoverConverter.formatString.binary": {
+                    "scope": "resource",
                     "type": "string",
                     "default": "0b{bin} → <{dec}>, <0x{hex}>",
                     "description": "Format string for binary values.\nAny text inside <...> brackets is clickable and will replace the hovered text with the corresponding value.\nYou can use the following variables: {bin} for the hovered binary value, {decu} for the converted positive decimal value, {deci} for the converted negative decimal value (if present), and {hex} for the converted hexadecimal value.\n{dec} is a special variable that displays both positive and negative decimal conversions (if present).\nClear this string to omit the conversion.",
                     "order": 13
                 },
                 "hexHoverConverter.formatString.stringSeparator": {
+                    "scope": "resource",
                     "type": "string",
                     "default": "\\n",
                     "description": "Specifies the separator used to join the format strings. Typically '\\n' places each conversion string on a separate line, while ', ' displays all conversion strings on a single line.",
                     "order": 20
                 },
                 "hexHoverConverter.strict.hexRecognition": {
+                    "scope": "resource",
                     "type": "boolean",
                     "default": true,
                     "description": "Recognize hexadecimal numbers only if they have a prefix (e.g. 0x or $) or suffix (e.g. h).",
                     "order": 30
                 },
                 "hexHoverConverter.strict.binRecognition": {
+                    "scope": "resource",
                     "type": "boolean",
                     "default": true,
                     "description": "Recognize binary numbers only if they have a prefix (e.g. b or 0b) or suffix (e.g. b).",
                     "order": 31
                 },
-                "hexHoverConverter.digitGrouping.decimalGroupSize": {
+                "hexHoverConverter.digitGrouping.decGroupSize": {
+                    "scope": "resource",
                     "type": "number",
                     "default": 3,
                     "description": "Specifies the number of digits in each group for decimal numbers. E.g. '1000000' can be displayed as '1,000,000' with a group size of 3.",
                     "order": 50
                 },
-                "hexHoverConverter.digitGrouping.decimalGroupSeparator": {
+                "hexHoverConverter.digitGrouping.decGroupSeparator": {
+                    "scope": "resource",
                     "type": "string",
                     "default": ",",
                     "description": "Specifies the separator used to group digits in decimal numbers. E.g. '1000000' can be displayed as '1,000,000'.",
                     "order": 51
                 },
                 "hexHoverConverter.digitGrouping.hexGroupSize": {
+                    "scope": "resource",
                     "type": "number",
                     "default": 4,
                     "description": "Specifies the number of digits in each group for hexadecimal numbers. E.g. '1A2BCD4F' can be displayed as '1A2B_CD4F' with a group size of 4.",
                     "order": 55
                 },
                 "hexHoverConverter.digitGrouping.hexGroupSeparator": {
+                    "scope": "resource",
                     "type": "string",
                     "default": "_",
                     "description": "Specifies the separator used to group digits in hexadecimal numbers. E.g. '1A2BCD4F' can be displayed as '1A2B_CD4F'.",
                     "order": 56
                 },
-                "hexHoverConverter.digitGrouping.binaryGroupSize": {
+                "hexHoverConverter.digitGrouping.binGroupSize": {
+                    "scope": "resource",
                     "type": "number",
                     "default": 8,
                     "description": "Specifies the number of digits in each group for binary numbers. E.g. '11010101' can be displayed as '1101_0101' with a group size of 4.",
                     "order": 60
                 },
-                "hexHoverConverter.digitGrouping.binaryGroupSeparator": {
+                "hexHoverConverter.digitGrouping.binGroupSeparator": {
+                    "scope": "resource",
                     "type": "string",
                     "default": "_",
                     "description": "Specifies the separator used to group digits in binary numbers. E.g. '11010101' can be displayed as '1101_0101'.",

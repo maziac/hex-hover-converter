@@ -16,7 +16,7 @@ export function activate(context: vscode.ExtensionContext) {
             const config = vscode.workspace.getConfiguration('hexHoverConverter');
 
             // Variables
-            const vars = new Vars(document, range);
+            const vars = new Vars(document, range, config);
 
             // Check if negative
             const r2 = new vscode.Range(range.start.line, 0, range.start.line, range.start.character);
@@ -130,14 +130,14 @@ export function activate(context: vscode.ExtensionContext) {
                 vars.convBinDec = value;
                 vars.convBinHex = value;
 
-                // Signed Decimal (nur wenn höchstes Bit gesetzt)
+                // Signed Decimal (only if highest bit is set)
                 if (binString[0] === '1') {
-                    // Höchstes Bit gesetzt.
-                    // Jetzt check ob Länge Zweierpotenz ist (8, 16, 32, 64, ...)
+                    // Highest bit set.
+                    // Now check if length is a power of two (8, 16, 32, 64, ...)
                     const bitLen = binString.length;
                     const isPowerOfTwo = (bitLen & (bitLen - 1)) === 0 && bitLen >= 8;
                     if (isPowerOfTwo) {
-                        // Länge ist Zweierpotenz
+                        // Length is a power of two
                         const negValue = value - (2n ** BigInt(bitLen));
                         vars.convBinSDec = negValue;
                     }
@@ -145,7 +145,7 @@ export function activate(context: vscode.ExtensionContext) {
             }
 
             // Replace in format string
-            const result = vars.toString(config);
+            const result = vars.toString();
             console.log(result); // For testing
 
             // Check if the value was converted and should be shown
